@@ -1,2 +1,2 @@
 # Advent-of-Code
-Advent of Code solutions https://adventofcode.com/
+Advent of Code solutions in Go https://adventofcode.com/
