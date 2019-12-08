@@ -7,5 +7,5 @@ const (
 
 func main() {
 	Solve1(start, end)
-	// Solve2(start, end)
+	Solve2(start, end)
 }

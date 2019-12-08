@@ -46,10 +46,9 @@ func Solve1(start, end int) ([]int, int) {
 	var solutionSpace []int
 	for s := start; s <= end; s++ {
 		d := digits(s)
-		if isIncreasing(d) {
-			if double(d) {
-				solutionSpace = append(solutionSpace, s)
-			}
+		if isIncreasing(d) && double(d) {
+			solutionSpace = append(solutionSpace, s)
+
 		}
 	}
 	fmt.Println("Problem 1: ", len(solutionSpace))
