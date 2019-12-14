@@ -36,7 +36,6 @@ func Solve1(input string) {
 	for i := 0; i < L; {
 		d := digits(xs[i])
 		opcode := d[0]
-		// fmt.Println(d, xs[i:i+4])
 		if opcode == 99 {
 			i++
 			break
