@@ -13,12 +13,12 @@ func main() {
 	tc2, err := ioutil.ReadFile("./t2")
 	if err == nil {
 		Solve1(string(tc2))
-		// Solve2(string(tc2))
+		Solve2(string(tc2))
 	}
 
-	// tc3, err := ioutil.ReadFile("./t3")
-	// if err == nil {
-	// 	Solve2(string(tc3))
-	// }
+	tc3, err := ioutil.ReadFile("./t3")
+	if err == nil {
+		Solve2(string(tc3))
+	}
 
 }
