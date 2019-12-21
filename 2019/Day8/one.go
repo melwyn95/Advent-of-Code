@@ -21,7 +21,7 @@ func count(slice []int, x int) int {
 	return count
 }
 
-func Solve1(image string, row, col int) {
+func Solve1(image string, row, col int) []string {
 	imagelen, layerlen, lidx := len(image), row*col, 0
 	layers := make([]string, imagelen/layerlen)
 	for i := 0; i < imagelen; i += layerlen {
@@ -40,4 +40,5 @@ func Solve1(image string, row, col int) {
 		}
 	}
 	fmt.Println(count(toIntSlice(layers[minrow]), 1) * count(toIntSlice(layers[minrow]), 2))
+	return layers
 }
