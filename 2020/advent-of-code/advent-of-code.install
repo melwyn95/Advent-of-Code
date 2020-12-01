@@ -1,0 +1,33 @@
+lib: [
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/META"
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/AdventOfCodeBinPesyModules.a" {"bin/pesy-modules/AdventOfCodeBinPesyModules.a"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/AdventOfCodeBinPesyModules.cma" {"bin/pesy-modules/AdventOfCodeBinPesyModules.cma"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/AdventOfCodeBinPesyModules.cmxa" {"bin/pesy-modules/AdventOfCodeBinPesyModules.cmxa"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/AdventOfCodeBinPesyModules.cmxs" {"bin/pesy-modules/AdventOfCodeBinPesyModules.cmxs"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/AdventOfCodeBinPesyModules.re" {"bin/pesy-modules/AdventOfCodeBinPesyModules.re"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/adventOfCodeBinPesyModules.cmi" {"bin/pesy-modules/adventOfCodeBinPesyModules.cmi"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/adventOfCodeBinPesyModules.cmt" {"bin/pesy-modules/adventOfCodeBinPesyModules.cmt"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/bin/pesy-modules/adventOfCodeBinPesyModules.cmx" {"bin/pesy-modules/adventOfCodeBinPesyModules.cmx"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/dune-package"
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/AdventOfCodeLibrary.a" {"library/AdventOfCodeLibrary.a"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/AdventOfCodeLibrary.cma" {"library/AdventOfCodeLibrary.cma"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/AdventOfCodeLibrary.cmxa" {"library/AdventOfCodeLibrary.cmxa"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/AdventOfCodeLibrary.cmxs" {"library/AdventOfCodeLibrary.cmxs"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/Util.re" {"library/Util.re"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/Util.rei" {"library/Util.rei"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary.cmi" {"library/adventOfCodeLibrary.cmi"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary.cmt" {"library/adventOfCodeLibrary.cmt"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary.cmx" {"library/adventOfCodeLibrary.cmx"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary.ml" {"library/adventOfCodeLibrary.ml"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary__Util.cmi" {"library/adventOfCodeLibrary__Util.cmi"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary__Util.cmt" {"library/adventOfCodeLibrary__Util.cmt"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary__Util.cmti" {"library/adventOfCodeLibrary__Util.cmti"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/library/adventOfCodeLibrary__Util.cmx" {"library/adventOfCodeLibrary__Util.cmx"}
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/lib/advent-of-code/opam"
+]
+bin: [
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/bin/AdventOfCodeApp"
+]
+doc: [
+  "/Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/install/default/doc/advent-of-code/README.md"
+]

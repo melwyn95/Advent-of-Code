@@ -1,0 +1,7 @@
+EXCLUDE_QUERY_DIR
+B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/default/bin/.AdventOfCodeApp.eobjs/byte
+B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/default/bin/.AdventOfCodeBinPesyModules.objs/byte
+B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/default/library/.AdventOfCodeLibrary.objs/byte
+S .
+S ../library
+FLG -open AdventOfCodeBinPesyModules -w -40

@@ -1,0 +1,45 @@
+{
+  "name": "advent-of-code",
+  "version": "0.1.0",
+  "description": "Starter Reason Project",
+  "esy": {
+    "build": "dune build -p #{self.name}",
+    "buildDev": "pesy build",
+    "release": {
+      "rewritePrefix": true,
+      "releasedBinaries": [
+        "AdventOfCodeApp"
+      ]
+    }
+  },
+  "pesy": {
+    "azure-project": "esy-dev/esy",
+    "github": "esy/pesy-reason-template"
+  },
+  "buildDirs": {
+    "library": {},
+    "bin": {
+      "imports": [
+        "Library = require('advent-of-code/library')"
+      ],
+      "bin": {
+        "AdventOfCodeApp": "AdventOfCodeApp.re"
+      }
+    }
+  },
+  "scripts": {
+    "start": "esy x AdventOfCodeApp"
+  },
+  "dependencies": {
+    "@esy-ocaml/reason": "*",
+    "@opam/dune": "*",
+    "@pesy/esy-pesy": "0.1.0-alpha.11",
+    "@reason-native/console": "^0.1.0",
+    "ocaml": "~4.9.0"
+  },
+  "devDependencies": {
+    "@opam/merlin": "*",
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
+    "refmterr": "*"
+  }
+}
