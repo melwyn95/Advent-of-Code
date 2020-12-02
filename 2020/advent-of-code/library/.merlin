@@ -1,4 +1,13 @@
 EXCLUDE_QUERY_DIR
-B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-54efcec5/default/library/.AdventOfCodeLibrary.objs/byte
+B /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__angstrom-opam__c__0.15.0-f0808d4b/lib/angstrom
+B /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__bigarray_compat-opam__c__1.0.0-0770abd0/lib/bigarray-compat
+B /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__bigstringaf-opam__c__0.7.0-d1f03b21/lib/bigstringaf
+B /Users/melwyns/.esy/3_________________________________________________________________/i/reason_native__s__console-0.1.0-64fccd1a/lib/console/lib
+B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-0320c379/default/library/.AdventOfCodeLibrary.objs/byte
+B /Users/melwyns/projects/Advent-of-Code/2020/advent-of-code/_esy/default/store/b/advent_of_code-0320c379/default/library/.AdventOfCodeLibraryPesyModules.objs/byte
+S /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__angstrom-opam__c__0.15.0-f0808d4b/lib/angstrom
+S /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__bigarray_compat-opam__c__1.0.0-0770abd0/lib/bigarray-compat
+S /Users/melwyns/.esy/3_________________________________________________________________/i/opam__s__bigstringaf-opam__c__0.7.0-d1f03b21/lib/bigstringaf
+S /Users/melwyns/.esy/3_________________________________________________________________/i/reason_native__s__console-0.1.0-64fccd1a/lib/console/lib
 S .
-FLG -open AdventOfCodeLibrary -w -40
+FLG -open AdventOfCodeLibrary -open AdventOfCodeLibraryPesyModules -w -40

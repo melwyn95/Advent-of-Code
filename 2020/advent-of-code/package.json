@@ -7,9 +7,7 @@
     "buildDev": "pesy build",
     "release": {
       "rewritePrefix": true,
-      "releasedBinaries": [
-        "AdventOfCodeApp"
-      ]
+      "releasedBinaries": [ "AdventOfCodeApp" ]
     }
   },
   "pesy": {
@@ -17,21 +15,21 @@
     "github": "esy/pesy-reason-template"
   },
   "buildDirs": {
-    "library": {},
-    "bin": {
+    "library": {
       "imports": [
-        "Library = require('advent-of-code/library')"
-      ],
-      "bin": {
-        "AdventOfCodeApp": "AdventOfCodeApp.re"
-      }
+        "Angstrom = require('@opam/angstrom')",
+        "Console = require('console/lib')"
+      ]
+    },
+    "bin": {
+      "imports": [ "Library = require('advent-of-code/library')" ],
+      "bin": { "AdventOfCodeApp": "AdventOfCodeApp.re" }
     }
   },
-  "scripts": {
-    "start": "esy x AdventOfCodeApp"
-  },
+  "scripts": { "start": "esy x AdventOfCodeApp" },
   "dependencies": {
     "@esy-ocaml/reason": "*",
+    "@opam/angstrom": "0.15.0",
     "@opam/dune": "*",
     "@pesy/esy-pesy": "0.1.0-alpha.11",
     "@reason-native/console": "^0.1.0",
