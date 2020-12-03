@@ -27,3 +27,16 @@ let (<<>>) = (x, y) =>
   | (false, true) => true
   | (false, false) => false
   };
+
+let zipListOfLists = (xs, ys) => {
+  let rec aux = (x, y, acc) =>
+    switch (x, y) {
+    | ([], [])
+    | (_, [])
+    | ([], _) => acc
+    | ([xhd, ...xtl], [yhd, ...ytl]) =>
+      aux(xtl, ytl, List.cons(List.concat([xhd, yhd]), acc))
+    };
+
+  aux(xs, ys, []);
+};
