@@ -65,7 +65,7 @@ let isPasswordValidPart2: Password.t => bool =
   };
 
 let run = () => {
-  print_endline("Day 2");
+  print_endline("---------- Day 2 ----------");
   /* Part 1 */
   let path = "./bin/input_day_2";
   let validPasswords =

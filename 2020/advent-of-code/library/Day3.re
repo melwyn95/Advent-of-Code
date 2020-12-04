@@ -32,7 +32,7 @@ let findTrees = indexes => {
 };
 
 let run = () => {
-  print_endline("Day 3");
+  print_endline("---------- Day 3 ----------");
 
   let indexes = getIndexes(rows - 1, 3, 1);
 

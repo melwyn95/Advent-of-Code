@@ -34,19 +34,15 @@ let rec newFindSum2020 = xs =>
   };
 
 let run = () => {
-  print_endline("Day 1");
+  print_endline("---------- Day 1 ----------");
   /* Part 1 */
   switch (findSum2020(numbers)) {
-  | Some((x, y)) =>
-    print_int(x * y);
-    print_newline();
+  | Some((x, y)) => print_endline("Part 1> " ++ string_of_int(x * y))
   | None => print_endline("No Answer")
   };
   /* Part 2 */
   switch (newFindSum2020(numbers)) {
-  | Some((x, y, z)) =>
-    print_int(x * y * z);
-    print_newline();
+  | Some((x, y, z)) => print_endline("Part 2> " ++ string_of_int(x * y * z))
   | None => print_endline("No Answer")
   };
 };
