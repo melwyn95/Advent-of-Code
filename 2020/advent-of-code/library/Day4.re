@@ -18,177 +18,65 @@ module Passport = {
          (acc, x) => acc ++ Option.value(x, ~default="<na>"),
          "",
        );
+  type tVariant =
+    | Byr(string)
+    | Iyr(string)
+    | Eyr(string)
+    | Hgt(string)
+    | Hcl(string)
+    | Ecl(string)
+    | Pid(string)
+    | Cid(string);
 
-  let make =
-      (
-        ~byr=None,
-        ~iyr=None,
-        ~eyr=None,
-        ~hgt=None,
-        ~hcl=None,
-        ~ecl=None,
-        ~pid=None,
-        ~cid=None,
-        (),
-      ) => {
-    byr,
-    iyr,
-    eyr,
-    hgt,
-    hcl,
-    ecl,
-    pid,
-    cid,
+  let make = () => {
+    byr: None,
+    iyr: None,
+    eyr: None,
+    hgt: None,
+    hcl: None,
+    ecl: None,
+    pid: None,
+    cid: None,
   };
 
-  let merge = (p1: t, p2: t) => {
-    switch (p2) {
-    | {
-        byr: Some(byr),
-        iyr: None,
-        eyr: None,
-        hgt: None,
-        hcl: None,
-        ecl: None,
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        byr: Some(byr),
+  let rec merge = (acc, xs) => {
+    switch (xs) {
+    | [] => acc
+    | [hd, ...tl] =>
+      switch (hd) {
+      | Byr(byr) => merge({...acc, byr: Some(byr)}, tl)
+      | Iyr(iyr) => merge({...acc, iyr: Some(iyr)}, tl)
+      | Eyr(eyr) => merge({...acc, eyr: Some(eyr)}, tl)
+      | Hgt(hgt) => merge({...acc, hgt: Some(hgt)}, tl)
+      | Hcl(hcl) => merge({...acc, hcl: Some(hcl)}, tl)
+      | Ecl(ecl) => merge({...acc, ecl: Some(ecl)}, tl)
+      | Pid(pid) => merge({...acc, pid: Some(pid)}, tl)
+      | Cid(cid) => merge({...acc, cid: Some(cid)}, tl)
       }
-    | {
-        byr: None,
-        iyr: Some(iyr),
-        eyr: None,
-        hgt: None,
-        hcl: None,
-        ecl: None,
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        iyr: Some(iyr),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: Some(eyr),
-        hgt: None,
-        hcl: None,
-        ecl: None,
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        eyr: Some(eyr),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: None,
-        hgt: Some(hgt),
-        hcl: None,
-        ecl: None,
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        hgt: Some(hgt),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: None,
-        hgt: None,
-        hcl: Some(hcl),
-        ecl: None,
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        hcl: Some(hcl),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: None,
-        hgt: None,
-        hcl: None,
-        ecl: Some(ecl),
-        pid: None,
-        cid: None,
-      } => {
-        ...p1,
-        ecl: Some(ecl),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: None,
-        hgt: None,
-        hcl: None,
-        ecl: None,
-        pid: Some(pid),
-        cid: None,
-      } => {
-        ...p1,
-        pid: Some(pid),
-      }
-    | {
-        byr: None,
-        iyr: None,
-        eyr: None,
-        hgt: None,
-        hcl: None,
-        ecl: None,
-        pid: None,
-        cid: Some(cid),
-      } => {
-        ...p1,
-        cid: Some(cid),
-      }
-
-    | _ => p1
     };
   };
 
-  let space = string(" ");
+  let space = char(' ');
   let birthYear =
-    string("byr:")
-    *> take_while1(c => c != ' ')
-    >>| (byr => make(~byr=Some(byr), ()));
+    string("byr:") *> take_while1(c => c != ' ') >>| (byr => Byr(byr));
   let issueYear =
-    string("iyr:")
-    *> take_while1(c => c != ' ')
-    >>| (iyr => make(~iyr=Some(iyr), ()));
+    string("iyr:") *> take_while1(c => c != ' ') >>| (iyr => Iyr(iyr));
   let expirationYear =
-    string("eyr:")
-    *> take_while1(c => c != ' ')
-    >>| (eyr => make(~eyr=Some(eyr), ()));
+    string("eyr:") *> take_while1(c => c != ' ') >>| (eyr => Eyr(eyr));
   let height =
-    string("hgt:")
-    *> take_while1(c => c != ' ')
-    >>| (hgt => make(~hgt=Some(hgt), ()));
+    string("hgt:") *> take_while1(c => c != ' ') >>| (hgt => Hgt(hgt));
   let hairColor =
-    string("hcl:")
-    *> take_while1(c => c != ' ')
-    >>| (hcl => make(~hcl=Some(hcl), ()));
+    string("hcl:") *> take_while1(c => c != ' ') >>| (hcl => Hcl(hcl));
   let eyeColor =
-    string("ecl:")
-    *> take_while1(c => c != ' ')
-    >>| (ecl => make(~ecl=Some(ecl), ()));
+    string("ecl:") *> take_while1(c => c != ' ') >>| (ecl => Ecl(ecl));
   let passportId =
-    string("pid:")
-    *> take_while1(c => c != ' ')
-    >>| (pid => make(~pid=Some(pid), ()));
+    string("pid:") *> take_while1(c => c != ' ') >>| (pid => Pid(pid));
   let countryId =
-    string("cid:")
-    *> take_while1(c => c != ' ')
-    >>| (cid => make(~cid=Some(cid), ()));
+    string("cid:") *> take_while1(c => c != ' ') >>| (cid => Cid(cid));
 
   let parser = {
     let partialPassports =
-      sep_by(
+      sep_by1(
         space,
         birthYear
         <|> issueYear
@@ -198,9 +86,9 @@ module Passport = {
         <|> hairColor
         <|> eyeColor
         <|> passportId
-        <|> countryId
-        <|> return(make()),
+        <|> countryId,
       );
+
     partialPassports;
   };
 
@@ -210,7 +98,6 @@ module Passport = {
     | Error(msg) => failwith(msg)
     };
   };
-
   let isPassportValid = p =>
     switch (p) {
     | {
@@ -320,7 +207,7 @@ let prepareInput = path => {
          if (x == "") {
            (List.cons(str, xs), "");
          } else {
-           (xs, str ++ x ++ " ");
+           (xs, String.trim(str ++ " " ++ x));
          },
        ([], ""),
      )
@@ -334,9 +221,7 @@ let run = () => {
   print_endline("---------- Day4 ----------");
 
   let assemblePassport = p =>
-    p
-    |> Passport.parse
-    |> List.fold_left((acc, p) => Passport.merge(acc, p), Passport.make());
+    p |> Passport.parse |> Passport.merge(Passport.make());
 
   let inputPart1 = prepareInput(path);
   let validPassports =
@@ -345,9 +230,7 @@ let run = () => {
     |> List.filter(Passport.isPassportValid);
 
   let numberValidPassports = validPassports |> List.length;
-
   Console.log("Part 1> " ++ string_of_int(numberValidPassports));
-
   let validPassports2 =
     inputPart1
     |> List.map(assemblePassport)
