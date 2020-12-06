@@ -5,3 +5,4 @@ Library.Day2.run();
 Library.Day3.run();
 Library.Day4.run();
 Library.Day5.run();
+Library.Day6.run();
