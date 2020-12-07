@@ -218,7 +218,7 @@ let path = "./bin/input_day_4";
 let testPath = "./bin/input_day_4_test";
 
 let run = () => {
-  print_endline("---------- Day4 ----------");
+  print_endline("---------- Day 4 ----------");
 
   let assemblePassport = p =>
     p |> Passport.parse |> Passport.merge(Passport.make());
