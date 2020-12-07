@@ -47,18 +47,18 @@ type hashTableType = Hashtbl.t(string, list((int, string)));
 
 /* TODO: memoize this function */
 /* very sub optimal code optimize later */
-let rec resolve = (xs: list((int, string)), htbl: hashTableType) => {
+let rec dfs = (xs: list((int, string)), htbl: hashTableType, search: string) => {
   switch (xs) {
-  | [] => []
-  | [(i, x), ...tl] =>
-    List.concat([
-      x == "shiny gold"
-        ? [(i, x)] : Hashtbl.find(htbl, x) |> (ys => resolve(ys, htbl)),
-      resolve(tl, htbl),
-    ])
+  | [] => false
+  | [(_, x), ...tl] =>
+    x == search
+    || dfs(Hashtbl.find(htbl, x), htbl, search)
+    || dfs(tl, htbl, search)
   };
 };
 
+/* TODO: memoize this function */
+/* very sub optimal code optimize later */
 let rec resolveNumber = (xs: list((int, string)), htbl: hashTableType) => {
   switch (xs) {
   | [] => 0
@@ -85,40 +85,21 @@ let run = () => {
          },
          Hashtbl.create(List.length(parsedLuggage)),
        );
+
   let resolvedLuggage =
     parsedLuggage
-    |> List.map(((color, bags)) => (color, resolve(bags, luggageHashTbl)));
-  let containsShinyGoldBag =
-    resolvedLuggage
-    |> List.filter(((_, bags)) =>
-         bags |> List.exists(((_, bag)) => bag == "shiny gold")
-       );
+    |> List.map(((color, bags)) => dfs(bags, luggageHashTbl, "shiny gold"))
+    |> List.filter(x => x)
+    |> List.length;
 
-  Console.log(
-    "Part 1> " ++ string_of_int(List.length(containsShinyGoldBag)),
-  );
+  Console.log("Part 1> " ++ string_of_int(resolvedLuggage));
 
-  let resolveNuberedLuggage =
+  let (_, shinyGold) =
     parsedLuggage
     |> List.map(((color, bags)) =>
          (color, resolveNumber(bags, luggageHashTbl))
-       );
-  let shinyGold = Hashtbl.find(luggageHashTbl, "shiny gold");
-  let numberOfBags =
-    shinyGold
-    |> List.fold_left(
-         (acc, (n, x)) =>
-           acc
-           + (
-             n
-             + n
-             * (
-               resolveNuberedLuggage
-               |> List.find(((s, _)) => x == s)
-               |> (((_, y)) => y)
-             )
-           ),
-         0,
-       );
-  Console.log("Part 2> " ++ string_of_int(numberOfBags));
+       )
+    |> List.find(((s, _)) => s == "shiny gold");
+
+  Console.log("Part 2> " ++ string_of_int(shinyGold));
 };
