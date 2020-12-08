@@ -7,3 +7,4 @@ Library.Day4.run();
 Library.Day5.run();
 Library.Day6.run();
 Library.Day7.run();
+Library.Day8.run();
