@@ -47,13 +47,17 @@ module StateMachine = {
 
   type state = {
     direction,
-    horizonal: int,
+    horizontal: int,
     vertical: int,
   };
 
-  let manhattanDistance = s => abs(s.horizonal) + abs(s.vertical);
+  let manhattanDistance = s => abs(s.horizontal) + abs(s.vertical);
 
-  let initial = () => {direction: East, horizonal: 0, vertical: 0};
+  let initial = (~horizontal=0, ~vertical=0, ()) => {
+    direction: East,
+    horizontal,
+    vertical,
+  };
 
   let moveForward = (state, action) => {
     let dir = state.direction;
@@ -61,19 +65,19 @@ module StateMachine = {
     switch (dir) {
     | North => {...state, vertical: state.vertical + distance}
     | South => {...state, vertical: state.vertical - distance}
-    | East => {...state, horizonal: state.horizonal + distance}
-    | West => {...state, horizonal: state.horizonal - distance}
+    | East => {...state, horizontal: state.horizontal + distance}
+    | West => {...state, horizontal: state.horizontal - distance}
     };
   };
 
   let moveHorizontal = (state, action) => {
-    let horizonal =
+    let horizontal =
       switch (action) {
-      | Action.E(distance) => state.horizonal + distance
-      | Action.W(distance) => state.horizonal - distance
+      | Action.E(distance) => state.horizontal + distance
+      | Action.W(distance) => state.horizontal - distance
       | _ => failwith("invalid case")
       };
-    {...state, horizonal};
+    {...state, horizontal};
   };
 
   let moveVertical = (state, action) => {
@@ -139,7 +143,127 @@ module StateMachine = {
   };
 };
 
+module StateMachine2 = {
+  type direction =
+    | North
+    | South
+    | East
+    | West;
+
+  type position = {
+    x: int,
+    y: int,
+  };
+
+  type state = {
+    ship: position,
+    waypoint: position,
+  };
+
+  let initial = (~shipX, ~shipY, ~wayPointX, ~wayPointY) => {
+    ship: {
+      x: shipX,
+      y: shipY,
+    },
+    waypoint: {
+      x: wayPointX,
+      y: wayPointY,
+    },
+  };
+
+  let moveHorizontal = (state, action) => {
+    let horizontal =
+      switch (action) {
+      | Action.E(distance) => state.waypoint.x + distance
+      | Action.W(distance) => state.waypoint.x - distance
+      | _ => failwith("invalid case")
+      };
+    {
+      ...state,
+      waypoint: {
+        ...state.waypoint,
+        x: horizontal,
+      },
+    };
+  };
+
+  let moveVertical = (state, action) => {
+    let vertical =
+      switch (action) {
+      | Action.N(distance) => state.waypoint.y + distance
+      | Action.S(distance) => state.waypoint.y - distance
+      | _ => failwith("invalid case")
+      };
+    {
+      ...state,
+      waypoint: {
+        ...state.waypoint,
+        y: vertical,
+      },
+    };
+  };
+
+  let rotateRight = (state, action) => {
+    let angle = action |> Action.value;
+    let rec aux = (acc, count) =>
+      if (count == 0) {
+        acc;
+      } else {
+        let x = acc.x;
+        let y = acc.y;
+        let acc = {x: y, y: - x};
+        aux(acc, count - 1);
+      };
+    let waypoint = aux(state.waypoint, angle / 90);
+    {...state, waypoint};
+  };
+
+  let rotateLeft = (state, action) => {
+    let angle = action |> Action.value;
+    let rec aux = (acc, count) =>
+      if (count == 0) {
+        acc;
+      } else {
+        let x = acc.x;
+        let y = acc.y;
+        let acc = {x: - y, y: x};
+        aux(acc, count - 1);
+      };
+    let waypoint = aux(state.waypoint, angle / 90);
+    {...state, waypoint};
+  };
+
+  let moveForward = (state, action) => {
+    let waypoint = state.waypoint;
+    let ship = state.ship;
+    let ship =
+      switch (action) {
+      | Action.F(n) => {
+          x: ship.x + n * waypoint.x,
+          y: ship.y + n * waypoint.y,
+        }
+      | _ => failwith("invalid case")
+      };
+    {...state, ship};
+  };
+
+  let next = (state, action) => {
+    switch (action) {
+    | Action.N(_)
+    | Action.S(_) => moveVertical(state, action)
+    | Action.E(_)
+    | Action.W(_) => moveHorizontal(state, action)
+    | Action.F(_) => moveForward(state, action)
+    | Action.L(_) => rotateLeft(state, action)
+    | Action.R(_) => rotateRight(state, action)
+    };
+  };
+
+  let manhattanDistance = s => abs(s.ship.x) + abs(s.ship.y);
+};
+
 let run = () => {
+  print_endline("---------- Day 12 ----------");
   let initialState = StateMachine.initial();
   let finalState =
     Util.getLinesFromFile(path)
@@ -149,4 +273,15 @@ let run = () => {
   let distance = finalState |> StateMachine.manhattanDistance;
 
   Console.log("Part 1> " ++ string_of_int(distance));
+
+  let initialState2 =
+    StateMachine2.initial(~shipX=0, ~shipY=0, ~wayPointX=10, ~wayPointY=1);
+  let finalState =
+    Util.getLinesFromFile(path)
+    |> List.rev
+    |> List.map(Action.of_string)
+    |> List.fold_left(StateMachine2.next, initialState2);
+
+  let distance = finalState |> StateMachine2.manhattanDistance;
+  Console.log("Part 2> " ++ string_of_int(distance));
 };
