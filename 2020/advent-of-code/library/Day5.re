@@ -1,5 +1,5 @@
-let path = "./bin/input_day_5";
-let testPath = "./bin/input_day_5_test";
+let path = "./bin/input/input_day_5";
+let testPath = "./bin/input/input_day_5_test";
 
 let rec binaryRange = (index, sr, er, sc, ec, str) =>
   if (index < String.length(str)) {

@@ -1,6 +1,6 @@
-let path = "./bin/input_day_9";
+let path = "./bin/input/input_day_9";
 let preambleSize = 25;
-let testPath = "./bin/input_day_9_test";
+let testPath = "./bin/input/input_day_9_test";
 let testPreambleSize = 5;
 
 /* TODO: refactor this */

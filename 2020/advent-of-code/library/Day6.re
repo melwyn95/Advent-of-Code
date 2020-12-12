@@ -1,5 +1,5 @@
-let path = "./bin/input_day_6";
-let testPath = "./bin/input_day_6_test";
+let path = "./bin/input/input_day_6";
+let testPath = "./bin/input/input_day_6_test";
 
 module CharSet = Set.Make(Char);
 

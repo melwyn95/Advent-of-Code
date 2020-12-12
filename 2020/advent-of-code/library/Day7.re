@@ -40,8 +40,8 @@ module LuggageRule = {
     };
 };
 
-let path = "./bin/input_day_7";
-let testPath = "./bin/input_day_7_test";
+let path = "./bin/input/input_day_7";
+let testPath = "./bin/input/input_day_7_test";
 
 type hashTableType = Hashtbl.t(string, list((int, string)));
 

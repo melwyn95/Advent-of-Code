@@ -214,8 +214,8 @@ let prepareInput = path => {
   |> (((xs, str)) => List.cons(str, xs));
 };
 
-let path = "./bin/input_day_4";
-let testPath = "./bin/input_day_4_test";
+let path = "./bin/input/input_day_4";
+let testPath = "./bin/input/input_day_4_test";
 
 let run = () => {
   print_endline("---------- Day 4 ----------");

@@ -67,7 +67,7 @@ let isPasswordValidPart2: Password.t => bool =
 let run = () => {
   print_endline("---------- Day 2 ----------");
   /* Part 1 */
-  let path = "./bin/input_day_2";
+  let path = "./bin/input/input_day_2";
   let validPasswords =
     Util.getLinesFromFile(path)
     |> List.map(Password.parse)
@@ -78,7 +78,7 @@ let run = () => {
     "Part 1> Number of valid passwords: " ++ string_of_int(validPasswords),
   );
   /* Part 2 */
-  let path = "./bin/input_day_2";
+  let path = "./bin/input/input_day_2";
   let validPasswords =
     Util.getLinesFromFile(path)
     |> List.map(Password.parse)

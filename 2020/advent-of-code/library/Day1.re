@@ -1,4 +1,4 @@
-let path = "./bin/input_day_1";
+let path = "./bin/input/input_day_1";
 let numbers = Util.getLinesFromFile(path) |> List.map(int_of_string);
 
 /* Part 1 */

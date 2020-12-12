@@ -95,8 +95,8 @@ let rec findTerminatingInstructons = (instructions, ips) =>
     }
   };
 
-let testPath = "./bin/input_day_8_test";
-let path = "./bin/input_day_8";
+let testPath = "./bin/input/input_day_8_test";
+let path = "./bin/input/input_day_8";
 
 let run = () => {
   print_endline("---------- Day 8 ----------");

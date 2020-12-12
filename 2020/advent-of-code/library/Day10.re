@@ -1,5 +1,5 @@
-let path = "./bin/input_day_10";
-let testPath = "./bin/input_day_10_test";
+let path = "./bin/input/input_day_10";
+let testPath = "./bin/input/input_day_10_test";
 
 type hashTableType = Hashtbl.t(int, int);
 

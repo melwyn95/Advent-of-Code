@@ -18,8 +18,8 @@ let to_string = s =>
   | Floor => '.'
   };
 
-let testPath = "./bin/input_day_11_test";
-let path = "./bin/input_day_11";
+let testPath = "./bin/input/input_day_11_test";
+let path = "./bin/input/input_day_11";
 
 let getCell = (xs, r, c) => xs |> Array.get(_, r) |> Array.get(_, c);
 

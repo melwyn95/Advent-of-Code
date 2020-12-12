@@ -1,5 +1,5 @@
-let path = "./bin/input_day_3";
-let testPath = "./bin/input_day_3_test";
+let path = "./bin/input/input_day_3";
+let testPath = "./bin/input/input_day_3_test";
 
 let lines =
   Util.getLinesFromFile(path)
