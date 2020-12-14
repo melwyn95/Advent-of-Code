@@ -4,6 +4,7 @@ let path = "./bin/input/input_day_13";
 let testPath = "./bin/input/input_day_13_test";
 
 let run = () => {
+  print_endline("---------- Day 13 ----------");
   let lines = Util.getLinesFromFile(path) |> List.rev;
   let eta = lines |> List.hd |> int_of_string;
   let schedule =
