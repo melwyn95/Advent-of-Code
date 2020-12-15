@@ -67,6 +67,7 @@ let findNthTerm = (initial, n, lookup) => {
 /* Very in-efficient algorithm, need to optimize */
 
 let run = () => {
+  print_endline("---------- Day 15 ----------")
   let lookup = Hashtbl.create(2020);
   let initial =
     Util.getLinesFromFile(path)
