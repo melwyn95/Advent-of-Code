@@ -40,3 +40,13 @@ let zipListOfLists = (xs, ys) => {
 
   aux(xs, ys, []);
 };
+
+let findIndex = (xs, y) => {
+  let rec aux = (i, ys) => {
+    switch (ys) {
+    | [] => None
+    | [x, ...xs'] => x == y ? Some(i) : aux(i + 1, xs')
+    };
+  };
+  aux(0, xs);
+};
