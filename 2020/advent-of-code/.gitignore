@@ -1,3 +1,4 @@
 _esy/
 .ci/
 node_modules/
+.merlin

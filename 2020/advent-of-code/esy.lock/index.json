@@ -1,5 +1,5 @@
 {
-  "checksum": "544c2f087ddd24df0d89be71fb892ac2",
+  "checksum": "0f824029ba3fac0d1db0d41dec6f8e08",
   "root": "advent-of-code@link-dev:./package.json",
   "node": {
     "yarn-pkg-config@github:esy-ocaml/yarn-pkg-config#db3a0b63883606dd57c54a7158d560d6cba8cd79@d41d8cd9": {
@@ -80,14 +80,14 @@
       "overrides": [],
       "dependencies": [
         "ocaml@4.9.1000@d41d8cd9", "@reason-native/console@0.1.0@d41d8cd9",
-        "@pesy/esy-pesy@0.1.0-alpha.11@d41d8cd9",
+        "@pesy/esy-pesy@link:/Users/melwyns/oss/pesy",
         "@opam/dune@opam:2.7.1@f5f493bc",
         "@opam/angstrom@opam:0.15.0@48ede9cb",
         "@esy-ocaml/reason@3.6.2@d41d8cd9"
       ],
       "devDependencies": [
         "refmterr@3.3.2@d41d8cd9",
-        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#f0fbe4474c40a36282ef821d7bd7b0a29ccf33b6@d41d8cd9",
+        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#966a28f5d81b30aac3423e3d723a275057ef092a@d41d8cd9",
         "@opam/merlin@opam:3.4.2@9a4d1fd4"
       ]
     },
@@ -125,20 +125,14 @@
       ],
       "devDependencies": []
     },
-    "@pesy/esy-pesy@0.1.0-alpha.11@d41d8cd9": {
-      "id": "@pesy/esy-pesy@0.1.0-alpha.11@d41d8cd9",
+    "@pesy/esy-pesy@link:/Users/melwyns/oss/pesy": {
+      "id": "@pesy/esy-pesy@link:/Users/melwyns/oss/pesy",
       "name": "@pesy/esy-pesy",
-      "version": "0.1.0-alpha.11",
-      "source": {
-        "type": "install",
-        "source": [
-          "archive:https://registry.npmjs.org/@pesy/esy-pesy/-/esy-pesy-0.1.0-alpha.11.tgz#sha1:2e8d888ee77d34a4d76ede9b6f5002277a5588d7"
-        ]
-      },
+      "version": "link:/Users/melwyns/oss/pesy",
+      "source": { "type": "link", "path": "/Users/melwyns/oss/pesy" },
       "overrides": [],
       "dependencies": [
-        "refmterr@3.3.2@d41d8cd9", "ocaml@4.9.1000@d41d8cd9",
-        "@reason-native/pastel@0.3.0@d41d8cd9",
+        "ocaml@4.9.1000@d41d8cd9", "@reason-native/pastel@0.3.0@d41d8cd9",
         "@opam/yojson@opam:1.7.0@7056d985",
         "@opam/sexplib@opam:v0.14.0@f67f18de",
         "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
@@ -146,7 +140,9 @@
         "@opam/cmdliner@opam:1.0.4@93208aac",
         "@esy-ocaml/reason@3.6.2@d41d8cd9"
       ],
-      "devDependencies": []
+      "devDependencies": [
+        "ocaml@4.9.1000@d41d8cd9", "@opam/dune@opam:2.7.1@f5f493bc"
+      ]
     },
     "@opam/yojson@opam:1.7.0@7056d985": {
       "id": "@opam/yojson@opam:1.7.0@7056d985",
@@ -456,16 +452,16 @@
         "ocaml@4.9.1000@d41d8cd9", "@opam/dune@opam:2.7.1@f5f493bc"
       ]
     },
-    "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#f0fbe4474c40a36282ef821d7bd7b0a29ccf33b6@d41d8cd9": {
+    "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#966a28f5d81b30aac3423e3d723a275057ef092a@d41d8cd9": {
       "id":
-        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#f0fbe4474c40a36282ef821d7bd7b0a29ccf33b6@d41d8cd9",
+        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#966a28f5d81b30aac3423e3d723a275057ef092a@d41d8cd9",
       "name": "@opam/ocaml-lsp-server",
       "version":
-        "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#f0fbe4474c40a36282ef821d7bd7b0a29ccf33b6",
+        "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#966a28f5d81b30aac3423e3d723a275057ef092a",
       "source": {
         "type": "install",
         "source": [
-          "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#f0fbe4474c40a36282ef821d7bd7b0a29ccf33b6"
+          "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#966a28f5d81b30aac3423e3d723a275057ef092a"
         ]
       },
       "overrides": [],

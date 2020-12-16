@@ -7,7 +7,9 @@
     "buildDev": "pesy build",
     "release": {
       "rewritePrefix": true,
-      "releasedBinaries": [ "AdventOfCodeApp" ]
+      "releasedBinaries": [
+        "AdventOfCodeApp"
+      ]
     }
   },
   "pesy": {
@@ -19,14 +21,31 @@
       "imports": [
         "Angstrom = require('@opam/angstrom')",
         "Console = require('console/lib')"
+      ],
+      "foreignStubs": [
+        {
+          "language": "c",
+          "names": [
+            "Day15"
+          ],
+          "flags": [
+            "-O3"
+          ]
+        }
       ]
     },
     "bin": {
-      "imports": [ "Library = require('advent-of-code/library')" ],
-      "bin": { "AdventOfCodeApp": "AdventOfCodeApp.re" }
+      "imports": [
+        "Library = require('advent-of-code/library')"
+      ],
+      "bin": {
+        "AdventOfCodeApp": "AdventOfCodeApp.re"
+      }
     }
   },
-  "scripts": { "start": "esy x AdventOfCodeApp" },
+  "scripts": {
+    "start": "esy x AdventOfCodeApp"
+  },
   "dependencies": {
     "@esy-ocaml/reason": "*",
     "@opam/angstrom": "0.15.0",
@@ -39,5 +58,8 @@
     "@opam/merlin": "*",
     "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
     "refmterr": "*"
+  },
+  "resolutions": {
+    "@pesy/esy-pesy": "link:/Users/melwyns/oss/pesy"
   }
 }

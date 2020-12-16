@@ -1,6 +1,8 @@
 let path = "./bin/input/input_day_15";
 let testPath = "./bin/input/input_day_15_test";
 
+external find30000000thTerm: unit => int = "caml_find30000000thTerm";
+
 let turns = (s, e) => {
   let rec aux = (n, xs) => {
     switch (n) {
@@ -58,8 +60,8 @@ let findNthTerm = (initial, n, lookup) => {
        prev,
      );
 };
-/* Very in-efficient algorithm, need to optimize */
 
+/* Try this in C */
 let findNthTermImperative = (initial, n, lookup) => {
   let prev = ref(last(initial));
   let s = List.length(initial) + 1;
@@ -107,7 +109,5 @@ let run = () => {
   findNthTermImperative(initial, 2020, lookup)
   |> (n => Console.log("Part 1> " ++ string_of_int(n)));
 
-  let lookup = Hashtbl.create(30000000);
-  findNthTermImperative(initial, 30000000, lookup)
-  |> (n => Console.log("Part 2> " ++ string_of_int(n)));
+  find30000000thTerm() |> (n => Console.log("Part 2> " ++ string_of_int(n)));
 };
