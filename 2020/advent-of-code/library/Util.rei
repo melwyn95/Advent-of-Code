@@ -8,3 +8,5 @@ let stringToCharList: string => list(char);
 let (<<>>): (bool, bool) => bool;
 
 let zipListOfLists: (list(list('a)), list(list('a))) => list(list('a));
+
+let stringContains: (string, string) => bool;

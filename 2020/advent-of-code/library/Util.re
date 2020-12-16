@@ -50,3 +50,25 @@ let findIndex = (xs, y) => {
   };
   aux(0, xs);
 };
+
+let stringContains = (s1, s2) => {
+  let lenS2 = String.length(s2);
+  let lenS1 = String.length(s1);
+  if (lenS2 <= lenS1) {
+    let rec aux = (i, j) =>
+      if (j == lenS2) {
+        true;
+      } else {
+        s1.[i] == s2.[j] ? aux(i + 1, j + 1) : false;
+      };
+    let rec traverseS1 = i =>
+      if (i == lenS1 - lenS2) {
+        false;
+      } else {
+        aux(i, 0) ? true : traverseS1(i + 1);
+      };
+    traverseS1(0);
+  } else {
+    false;
+  };
+};

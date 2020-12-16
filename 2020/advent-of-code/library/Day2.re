@@ -75,7 +75,7 @@ let run = () => {
     |> List.length;
 
   Console.log(
-    "Part 1> Number of valid passwords: " ++ string_of_int(validPasswords),
+    "Part 1> " ++ string_of_int(validPasswords),
   );
   /* Part 2 */
   let path = "./bin/input/input_day_2";
@@ -86,6 +86,6 @@ let run = () => {
     |> List.length;
 
   Console.log(
-    "Part 2> Number of valid passwords: " ++ string_of_int(validPasswords),
+    "Part 2> : " ++ string_of_int(validPasswords),
   );
 };
