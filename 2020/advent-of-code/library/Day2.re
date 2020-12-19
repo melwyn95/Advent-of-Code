@@ -86,6 +86,6 @@ let run = () => {
     |> List.length;
 
   Console.log(
-    "Part 2> : " ++ string_of_int(validPasswords),
+    "Part 2> " ++ string_of_int(validPasswords),
   );
 };
