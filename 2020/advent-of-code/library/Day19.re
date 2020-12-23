@@ -56,6 +56,14 @@ module Rule = {
     | And(ts) => "AND(" ++ String.concat(",", List.map(toString, ts)) ++ ")"
     };
 
+  let modifiedRule8 =
+    Or([And([Reference(8), Reference(42)]), Reference(42)]);
+  let modifiedRule11 =
+    Or([
+      And([Reference(31), Reference(11), Reference(42)]),
+      And([Reference(31), Reference(42)]),
+    ]);
+
   let parser = its =>
     switch (its) {
     | [Input.String(s)] => String(s)
@@ -84,163 +92,89 @@ module Rule = {
     | _ => failwith("boom")
     };
 
-  let rec isResloved = t =>
-    switch (t) {
-    | Or(ts) => ts |> List.fold_left((acc, t) => acc && isResloved(t), true)
-    | And(ts) =>
-      ts |> List.fold_left((acc, t) => acc && isResloved(t), true)
-    | String(_) => true
-    | Reference(_) => false
-    };
-
-  let rec resolve = (t, rules) =>
-    switch (t) {
-    | Or(ts) => Or(ts |> List.map(resolve(_, rules)))
-    | And(ts) => And(ts |> List.map(resolve(_, rules)))
-    | String(s) => String(s)
-    | Reference(i) =>
-      switch (rules[i]) {
-      | (_, r) => r
-      }
-    };
-  let rec resolveRule = (rule, rules) =>
-    if (isResloved(rule)) {
-      rule;
-    } else {
-      resolveRule(resolve(rule, rules), rules);
-    };
-
-  let combineStrings = xxs => {
-    let xs = List.hd(xxs);
-    if (List.length(xxs) > 1) {
-      let xxs' = List.tl(xxs);
-      xs
-      |> List.map(x =>
-           xxs'
-           |> List.map(xs' => xs' |> List.map(x' => x ++ x'))
-           |> List.flatten
+  let rec validate = (rules, rule, input, index) => {
+    switch (rule) {
+    | Reference(n) =>
+      let (_, rule) = rules |> List.find(((i, _)) => i == n);
+      validate(rules, rule, input, index);
+    | String(s) => [
+        (
+          index < String.length(input) && s == Char.escaped(input.[index]),
+          index + 1,
+        ),
+      ]
+    | And(rules') =>
+      rules'
+      |> List.rev
+      |> List.fold_left(
+           (vs, rule) =>
+             vs
+             |> List.map(((isValid, index)) =>
+                  isValid
+                    ? validate(rules, rule, input, index) : [(false, index)]
+                )
+             |> List.flatten,
+           [(true, index)],
          )
+    | Or(rules') =>
+      rules'
+      |> List.rev
+      |> List.map(rule => validate(rules, rule, input, index))
       |> List.flatten
-      |> List.sort_uniq(Stdlib.compare);
-    } else {
-      xs;
+      |> List.filter(((isValid, _)) => isValid)
     };
   };
-
-  let isAllStrings = ts =>
-    ts
-    |> List.fold_left(
-         (b, t) =>
-           b
-           && (
-             switch (t) {
-             | String(_) => true
-             | _ => false
-             }
-           ),
-         true,
-       );
-  let isAllORs = ts =>
-    ts
-    |> List.fold_left(
-         (b, t) =>
-           b
-           && (
-             switch (t) {
-             | Or(_) => true
-             | _ => false
-             }
-           ),
-         true,
-       );
-
-  let rec resolveANDs = t =>
-    switch (t) {
-    | Or(ts) => Or(ts |> List.map(resolveANDs))
-    | And(ts) =>
-      isAllStrings(ts)
-        ? String(
-            List.fold_right(
-              (t, s) =>
-                switch (t) {
-                | String(s') => s' ++ s
-                | _ => failwith("not possible")
-                },
-              ts,
-              "",
-            ),
-          )
-        : And(ts |> List.map(resolveANDs))
-    | String(s) => String(s)
-    | Reference(i) => failwith("un-resolved")
-    };
-
-  let areSubExprsStrings =
-    List.fold_left(
-      (b, t) =>
-        b
-        && (
-          switch (t) {
-          | Or(ts) => isAllStrings(ts)
-          | _ => failwith("boom")
-          }
-        ),
-      true,
-    );
-
-  let extractStrings =
-    List.map(t =>
-      switch (t) {
-      | Or(ts) =>
-        ts
-        |> List.map(t =>
-             switch (t) {
-             | String(s) => s
-             | _ => failwith("boom")
-             }
-           )
-      | _ => failwith("boom")
-      }
-    );
-
-  let rec resolveORs = t =>
-    switch (t) {
-    | Or(ts) =>
-      isAllORs(ts) && areSubExprsStrings(ts)
-        ? Or(
-            extractStrings(ts) |> combineStrings |> List.map(s => String(s)),
-          )
-        : Or(ts |> List.map(resolveORs))
-    | And(ts) => And(ts |> List.map(resolveORs))
-    | String(s) => String(s)
-    | Reference(i) => failwith("un-resolved")
-    };
 };
 
 let run = () => {
+  print_endline("---------- Day 19 ----------");
   let input = Util.getLinesFromFile(path) |> List.rev;
-  let (rules, input) = input |> List.partition(String.contains(_, ':'));
+  let (rules, inputs) = input |> List.partition(String.contains(_, ':'));
+  let rules = rules |> List.map(Input.parse) |> List.map(Rule.parse);
+  let (_, rule) = rules |> List.find(((i, _)) => i == 0);
+
+  let inputs = List.tl(inputs); /* first item will be empty string */
+  let validRules =
+    inputs
+    |> List.map(input => {
+         let (isValid, index) =
+           Rule.validate(rules, rule, input, 0)
+           |> (x => List.length(x) > 0 ? List.hd(x) : (false, (-1)));
+
+         isValid ? index == String.length(input) : false;
+       })
+    |> List.filter(x => x)
+    |> List.length;
+
+  Console.log("Part 1> " ++ string_of_int(validRules));
+
+  let input = Util.getLinesFromFile(path) |> List.rev;
+  let (rules, inputs) = input |> List.partition(String.contains(_, ':'));
   let rules =
-    rules |> List.map(Input.parse) |> List.map(Rule.parse) |> Array.of_list;
-  rules |> Array.sort(((i, _), (j, _)) => Stdlib.compare(i, j));
-  let (_, rule) = rules[0];
-  let rule = Rule.resolveRule(rule, rules);
+    rules
+    |> List.map(Input.parse)
+    |> List.map(Rule.parse)
+    |> List.map(((n, rule)) =>
+         switch (n) {
+         | 8 => (n, Rule.modifiedRule8)
+         | 11 => (n, Rule.modifiedRule11)
+         | _ => (n, rule)
+         }
+       );
+  let (_, rule) = rules |> List.find(((i, _)) => i == 0);
 
-  Console.log(Rule.isResloved(rule));
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveORs(rule);
-  let rule = Rule.resolveORs(rule);
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveORs(rule);
-  let rule = Rule.resolveORs(rule);
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveANDs(rule);
-  let rule = Rule.resolveORs(rule);
-  let rule = Rule.resolveORs(rule);
+  let inputs = List.tl(inputs); /* first item will be empty string */
+  let validRules =
+    inputs
+    |> List.map(input => {
+         let (isValid, index) =
+           Rule.validate(rules, rule, input, 0)
+           |> (x => List.length(x) > 0 ? List.hd(x) : (false, (-1)));
 
-  Console.log(Rule.toString(rule));
-  /* Rule.combine(rule) |> List.iter(Console.log); */
-  ();
+         isValid ? index == String.length(input) : false;
+       })
+    |> List.filter(x => x)
+    |> List.length;
+
+  Console.log("Part 2> " ++ string_of_int(validRules));
 };

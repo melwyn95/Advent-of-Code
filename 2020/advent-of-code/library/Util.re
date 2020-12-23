@@ -72,3 +72,20 @@ let stringContains = (s1, s2) => {
     false;
   };
 };
+
+let combineStrings = xxs => {
+  let xs = List.hd(xxs);
+  if (List.length(xxs) > 1) {
+    let xxs' = List.tl(xxs);
+    xs
+    |> List.map(x =>
+         xxs'
+         |> List.map(xs' => xs' |> List.map(x' => x ++ x'))
+         |> List.flatten
+       )
+    |> List.flatten
+    |> List.sort_uniq(Stdlib.compare);
+  } else {
+    xs;
+  };
+};
