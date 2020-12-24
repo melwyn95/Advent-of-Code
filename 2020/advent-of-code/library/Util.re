@@ -108,3 +108,15 @@ let dec2bin = n => {
     };
   aux(35, n);
 };
+
+let keepDups = xs => {
+  let rec aux = (xs, ys) => {
+    switch (xs) {
+    | [] => ys
+    | [x, ...xs'] =>
+      List.mem(x, xs') && !List.mem(x, ys)
+        ? aux(xs', List.cons(x, ys)) : aux(xs', ys)
+    };
+  };
+  aux(xs, []);
+};

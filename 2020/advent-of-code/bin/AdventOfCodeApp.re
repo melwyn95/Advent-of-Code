@@ -19,4 +19,6 @@ print_newline();
    Library.Day17.run();
    Library.Day18.run();
    Library.Day19.run(); */
-Library.Day20.run();
+/* Library.Day20.run(); */
+
+Library.Day21.run();

@@ -14,3 +14,5 @@ let stringContains: (string, string) => bool;
 let bin2dec: array(int) => int;
 
 let dec2bin: int => array(int);
+
+let keepDups: list('a) => list('a);
