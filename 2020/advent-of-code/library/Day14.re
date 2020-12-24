@@ -80,25 +80,6 @@ module Input = {
 };
 
 module Instruction = {
-  let dec2bin = n => {
-    let bin = Array.make(36, 0);
-    let rec aux = (index, remaining) =>
-      if (remaining == 0) {
-        bin;
-      } else {
-        bin[index] = remaining mod 2;
-        aux(index - 1, remaining / 2);
-      };
-    aux(35, n);
-  };
-
-  let bin2dec = bs => {
-    let len = (bs |> Array.length) - 1;
-    bs
-    |> Array.mapi((i, b) => b * int_of_float(2.0 ** float_of_int(len - i)))
-    |> Array.fold_left((+), 0);
-  };
-
   let applyMask = (mask, value) => {
     Array.map2(
       (maskBit, valueBit) =>
@@ -108,14 +89,14 @@ module Instruction = {
         | Input.O => 0
         },
       mask,
-      dec2bin(value),
+      Util.dec2bin(value),
     );
   };
 
   let eval = (memory, mask, instr) => {
     switch (instr) {
     | Input.Assign(m, v) =>
-      memory[m] = applyMask(mask, v) |> bin2dec;
+      memory[m] = applyMask(mask, v) |> Util.bin2dec;
       (memory, mask);
     | Input.Mask(m) => (memory, m)
     };
@@ -189,10 +170,10 @@ module Instruction = {
     switch (instr) {
     | Input.Assign(m, v) =>
       let memoryLocations =
-        applyMask2(mask, dec2bin(m))
+        applyMask2(mask, Util.dec2bin(m))
         |> expandMask
         |> List.map(mask2bin)
-        |> List.map(bin2dec);
+        |> List.map(Util.bin2dec);
       memoryLocations
       |> List.iter(loc =>
            if (Hashtbl.mem(memory, loc)) {

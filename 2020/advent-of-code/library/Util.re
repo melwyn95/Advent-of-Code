@@ -89,3 +89,22 @@ let combineStrings = xxs => {
     xs;
   };
 };
+
+let bin2dec = bs => {
+  let len = (bs |> Array.length) - 1;
+  bs
+  |> Array.mapi((i, b) => b * int_of_float(2.0 ** float_of_int(len - i)))
+  |> Array.fold_left((+), 0);
+};
+
+let dec2bin = n => {
+  let bin = Array.make(36, 0);
+  let rec aux = (index, remaining) =>
+    if (remaining == 0) {
+      bin;
+    } else {
+      bin[index] = remaining mod 2;
+      aux(index - 1, remaining / 2);
+    };
+  aux(35, n);
+};
