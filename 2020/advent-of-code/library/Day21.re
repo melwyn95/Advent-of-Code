@@ -81,6 +81,7 @@ let resolve = xs => {
 };
 
 let run = () => {
+  print_endline("---------- Day 21 ----------");
   let lookup = Hashtbl.create(50);
   let foods = Util.getLinesFromFile(path) |> List.map(Food.parse);
 

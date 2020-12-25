@@ -190,6 +190,7 @@ let findNeigbbours: (list(tile), tile) => neighbours =
   };
 
 let run = () => {
+  print_endline("---------- Day 20 ----------");
   let tiles =
     Util.getLinesFromFile(path)
     |> List.fold_left(
