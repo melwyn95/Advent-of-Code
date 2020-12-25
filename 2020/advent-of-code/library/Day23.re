@@ -86,10 +86,12 @@ let rec times = (n, (xs, i)) => {
   n == 0 ? xs : times(n - 1, move(xs, i));
 };
 
+external crabCupsPar2: unit => int = "caml_crabCups";
+
 let run = () => {
   print_endline("---------- Day 23 ----------");
   let initial =
-    Util.stringToCharList(testInput)
+    Util.stringToCharList(input)
     |> List.map(x => int_of_char(x) - 48)
     |> Array.of_list;
   let final = times(100, (initial, 0));
@@ -97,4 +99,7 @@ let run = () => {
   let answer =
     List.concat([ns, ps]) |> List.map(string_of_int) |> String.concat("");
   Console.log("Part 1> " ++ answer);
+
+  let part2 = crabCupsPar2();
+  Console.log("Part 2> " ++ string_of_int(part2));
 };

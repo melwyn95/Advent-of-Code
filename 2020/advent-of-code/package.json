@@ -26,7 +26,8 @@
         {
           "language": "c",
           "names": [
-            "Day15"
+            "Day15",
+            "Day23"
           ],
           "flags": [
             "-O3"
