@@ -113,10 +113,9 @@ let rec day = (space, n) =>
 
 let run = () => {
   let paths = Util.getLinesFromFile(path) |> List.map(Path.parse);
-  /* generate all neighbours */
-  let space = Hashtbl.create(1000000);
+  let space = Hashtbl.create(20);
   Hashtbl.add(space, (0, 0), false);
-  generateNeighbours([(0, 0)], space, 200);
+  generateNeighbours([(0, 0)], space, 65);
 
   paths
   |> List.iter(path => {
