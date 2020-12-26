@@ -112,6 +112,7 @@ let rec day = (space, n) =>
   };
 
 let run = () => {
+  print_endline("---------- Day 24 ----------");
   let paths = Util.getLinesFromFile(path) |> List.map(Path.parse);
   let space = Hashtbl.create(20);
   Hashtbl.add(space, (0, 0), false);
