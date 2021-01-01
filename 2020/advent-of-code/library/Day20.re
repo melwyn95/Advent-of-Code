@@ -51,626 +51,84 @@ let ofStrings = xs => {
 
   {id, pixels};
 };
-
-let findTopNeighbour = (topEdge, tiles) => {
-  tiles
+/* TODO: [optimization] store the edges of all the tiles to avoid edge recomputation*/
+let findNeighbours = (edge, unplaced) => {
+  unplaced
   |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (topEdge == topNoFlip
-                 || topEdge == rightNoFlip
-                 || topEdge == bottomNoFlip
-                 || topEdge == leftNoFlip) {
-               if (topEdge == topNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(tile.pixels)),
-                 });
-               } else if (topEdge == rightNoFlip) {
-                 Some({id: tile.id, pixels: rotate90(tile.pixels)});
-               } else if (topEdge == bottomNoFlip) {
-                 Some({id: tile.id, pixels: tile.pixels});
-               } else {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(tile.pixels))),
-                 });
-               };
-             } else if (topEdge == topFx
-                        || topEdge == rightFx
-                        || topEdge == bottomFx
-                        || topEdge == leftFx) {
-               if (topEdge == topFx) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fX))});
-               } else if (topEdge == rightFx) {
-                 Some({id: tile.id, pixels: rotate90(fX)});
-               } else if (topEdge == bottomFx) {
-                 Some({id: tile.id, pixels: fX});
-               } else {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fX))),
-                 });
-               };
-             } else if (topEdge == topFy
-                        || topEdge == rightFy
-                        || topEdge == bottomFy
-                        || topEdge == leftFy) {
-               if (topEdge == topFy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fY))});
-               } else if (topEdge == rightFy) {
-                 Some({id: tile.id, pixels: rotate90(fY)});
-               } else if (topEdge == bottomFy) {
-                 Some({id: tile.id, pixels: fY});
-               } else {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fY))),
-                 });
-               };
-             } else if (topEdge == topFxy
-                        || topEdge == rightFxy
-                        || topEdge == bottomFxy
-                        || topEdge == leftFxy) {
-               if (topEdge == topFxy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fXY))});
-               } else if (topEdge == rightFxy) {
-                 Some({id: tile.id, pixels: rotate90(fXY)});
-               } else if (topEdge == bottomFxy) {
-                 Some({id: tile.id, pixels: fXY});
-               } else {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fXY))),
-                 });
-               };
-             } else {
-               None;
-             };
-           },
-       None,
+       (xs, tile) => {
+         let pixels = tile.pixels;
+         let (top', right', bottom', left') = getEdges(pixels);
+         let (topFX', rightFX', bottomFX', leftFX') =
+           getEdges(flipX(pixels));
+         let (topFY', rightFY', bottomFY', leftFY') =
+           getEdges(flipY(pixels));
+         let allPossibleEdges = [|
+           top',
+           right',
+           bottom',
+           left',
+           topFX',
+           rightFX',
+           bottomFX',
+           leftFX',
+           topFY',
+           rightFY',
+           bottomFY',
+           leftFY',
+         |];
+         allPossibleEdges
+         |> Array.fold_left((b, edge') => b ? b : edge == edge', false)
+           ? List.cons(tile.id, xs) : xs;
+       },
+       [],
      );
 };
 
-let findRightNeighbour = (rightEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (rightEdge == topNoFlip
-                 || rightEdge == rightNoFlip
-                 || rightEdge == bottomNoFlip
-                 || rightEdge == leftNoFlip) {
-               if (rightEdge == topNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(tile.pixels))),
-                 });
-               } else if (rightEdge == rightNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(tile.pixels)),
-                 });
-               } else if (rightEdge == bottomNoFlip) {
-                 Some({id: tile.id, pixels: rotate90(tile.pixels)});
-               } else {
-                 Some({id: tile.id, pixels: tile.pixels});
-               };
-             } else if (rightEdge == topFx
-                        || rightEdge == rightFx
-                        || rightEdge == bottomFx
-                        || rightEdge == leftFx) {
-               if (rightEdge == topFx) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fX))),
-                 });
-               } else if (rightEdge == rightFx) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fX))});
-               } else if (rightEdge == bottomFx) {
-                 Some({id: tile.id, pixels: rotate90(fX)});
-               } else {
-                 Some({id: tile.id, pixels: fX});
-               };
-             } else if (rightEdge == topFy
-                        || rightEdge == rightFy
-                        || rightEdge == bottomFy
-                        || rightEdge == leftFy) {
-               if (rightEdge == topFy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fY))),
-                 });
-               } else if (rightEdge == rightFy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fY))});
-               } else if (rightEdge == bottomFy) {
-                 Some({id: tile.id, pixels: rotate90(fY)});
-               } else {
-                 Some({id: tile.id, pixels: fY});
-               };
-             } else if (rightEdge == topFxy
-                        || rightEdge == rightFxy
-                        || rightEdge == bottomFxy
-                        || rightEdge == leftFxy) {
-               if (rightEdge == topFxy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fXY))),
-                 });
-               } else if (rightEdge == rightFxy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fXY))});
-               } else if (rightEdge == bottomFxy) {
-                 Some({id: tile.id, pixels: rotate90(fXY)});
-               } else {
-                 Some({id: tile.id, pixels: fXY});
-               };
-             } else {
-               None;
-             };
-           },
-       None,
-     );
+let makeLookup = (lookup, tile, allTiles) => {
+  let allTiles = allTiles |> List.filter(t => t.id != tile.id);
+  let pixels = tile.pixels;
+  let (top', right', bottom', left') = getEdges(pixels);
+  let (topFX', rightFX', bottomFX', leftFX') = getEdges(flipX(pixels));
+  let (topFY', rightFY', bottomFY', leftFY') = getEdges(flipY(pixels));
+
+  let neighbours =
+    [
+      top',
+      right',
+      bottom',
+      left',
+      topFX',
+      rightFX',
+      bottomFX',
+      leftFX',
+      topFY',
+      rightFY',
+      bottomFY',
+      leftFY',
+    ]
+    |> List.fold_left(
+         (xs, edge) => List.cons(findNeighbours(edge, allTiles), xs),
+         [],
+       )
+    |> List.flatten
+    |> List.sort_uniq((t1, t2) => Stdlib.compare(t1, t2));
+
+  Hashtbl.add(lookup, tile.id, neighbours);
 };
 
-let findBottomNeighbour = (bottomEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (bottomEdge == topNoFlip
-                 || bottomEdge == rightNoFlip
-                 || bottomEdge == bottomNoFlip
-                 || bottomEdge == leftNoFlip) {
-               if (bottomEdge == topNoFlip) {
-                 Some({id: tile.id, pixels: tile.pixels});
-               } else if (bottomEdge == rightNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(tile.pixels))),
-                 });
-               } else if (bottomEdge == bottomNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(tile.pixels)),
-                 });
-               } else {
-                 Some({id: tile.id, pixels: rotate90(tile.pixels)});
-               };
-             } else if (bottomEdge == topFx
-                        || bottomEdge == rightFx
-                        || bottomEdge == bottomFx
-                        || bottomEdge == leftFx) {
-               if (bottomEdge == topFx) {
-                 Some({id: tile.id, pixels: fX});
-               } else if (bottomEdge == rightFx) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fX))),
-                 });
-               } else if (bottomEdge == bottomFx) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fX))});
-               } else {
-                 Some({id: tile.id, pixels: rotate90(fX)});
-               };
-             } else if (bottomEdge == topFy
-                        || bottomEdge == rightFy
-                        || bottomEdge == bottomFy
-                        || bottomEdge == leftFy) {
-               if (bottomEdge == topFy) {
-                 Some({id: tile.id, pixels: fY});
-               } else if (bottomEdge == rightFy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fY))),
-                 });
-               } else if (bottomEdge == bottomFy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fY))});
-               } else {
-                 Some({id: tile.id, pixels: rotate90(fY)});
-               };
-             } else if (bottomEdge == topFxy
-                        || bottomEdge == rightFxy
-                        || bottomEdge == bottomFxy
-                        || bottomEdge == leftFxy) {
-               if (bottomEdge == topFxy) {
-                 Some({id: tile.id, pixels: fXY});
-               } else if (bottomEdge == rightFxy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fXY))),
-                 });
-               } else if (bottomEdge == bottomFxy) {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fXY))});
-               } else {
-                 Some({id: tile.id, pixels: rotate90(fXY)});
-               };
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
+let findEdgeRow = (lookup, tileID, edges, corners) => {
+  let rec aux = (xs, tID) => {
+    let x =
+      Hashtbl.find(lookup, tID)
+      |> List.filter(tileID =>
+           List.mem(tileID, edges) && !List.mem(tileID, xs)
+         );
 
-let findLeftNeighbour = (leftEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (leftEdge == topNoFlip
-                 || leftEdge == rightNoFlip
-                 || leftEdge == bottomNoFlip
-                 || leftEdge == leftNoFlip) {
-               if (leftEdge == topNoFlip) {
-                 Some({id: tile.id, pixels: rotate90(tile.pixels)});
-               } else if (leftEdge == rightNoFlip) {
-                 Some({id: tile.id, pixels: tile.pixels});
-               } else if (leftEdge == bottomNoFlip) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(tile.pixels))),
-                 });
-               } else {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(tile.pixels)),
-                 });
-               };
-             } else if (leftEdge == topFx
-                        || leftEdge == rightFx
-                        || leftEdge == bottomFx
-                        || leftEdge == leftFx) {
-               if (leftEdge == topFx) {
-                 Some({id: tile.id, pixels: rotate90(fX)});
-               } else if (leftEdge == rightFx) {
-                 Some({id: tile.id, pixels: fX});
-               } else if (leftEdge == bottomFx) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fX))),
-                 });
-               } else {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fX))});
-               };
-             } else if (leftEdge == topFy
-                        || leftEdge == rightFy
-                        || leftEdge == bottomFy
-                        || leftEdge == leftFy) {
-               if (leftEdge == topFy) {
-                 Some({id: tile.id, pixels: rotate90(fY)});
-               } else if (leftEdge == rightFy) {
-                 Some({id: tile.id, pixels: fY});
-               } else if (leftEdge == bottomFy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fY))),
-                 });
-               } else {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fY))});
-               };
-             } else if (leftEdge == topFxy
-                        || leftEdge == rightFxy
-                        || leftEdge == bottomFxy
-                        || leftEdge == leftFxy) {
-               if (leftEdge == topFxy) {
-                 Some({id: tile.id, pixels: rotate90(fXY)});
-               } else if (leftEdge == rightFxy) {
-                 Some({id: tile.id, pixels: fXY});
-               } else if (leftEdge == bottomFxy) {
-                 Some({
-                   id: tile.id,
-                   pixels: rotate90(rotate90(rotate90(fXY))),
-                 });
-               } else {
-                 Some({id: tile.id, pixels: rotate90(rotate90(fXY))});
-               };
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
-
-let findTopRightNeighbour = (topEdge, rightEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (rightEdge == leftNoFlip && topEdge == bottomNoFlip) {
-               Some({id: tile.id, pixels: tile.pixels});
-             } else if (rightEdge == leftFx && topEdge == bottomFx) {
-               Some({id: tile.id, pixels: fX});
-             } else if (rightEdge == leftFy && topEdge == bottomFy) {
-               Some({id: tile.id, pixels: fY});
-             } else if (rightEdge == leftFxy && topEdge == bottomFxy) {
-               Some({id: tile.id, pixels: fXY});
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
-
-let findTopLeftNeighbour = (topEdge, leftEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (leftEdge == rightNoFlip && topEdge == bottomNoFlip) {
-               Some({id: tile.id, pixels: tile.pixels});
-             } else if (leftEdge == rightFx && topEdge == bottomFx) {
-               Some({id: tile.id, pixels: fX});
-             } else if (leftEdge == rightFy && topEdge == bottomFy) {
-               Some({id: tile.id, pixels: fY});
-             } else if (leftEdge == rightFxy && topEdge == bottomFxy) {
-               Some({id: tile.id, pixels: fXY});
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
-
-let findBottomLeftNeighbour = (bottomEdge, leftEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (leftEdge == rightNoFlip && bottomEdge == topNoFlip) {
-               Some({id: tile.id, pixels: tile.pixels});
-             } else if (leftEdge == rightFx && bottomEdge == topFx) {
-               Some({id: tile.id, pixels: fX});
-             } else if (leftEdge == rightFy && bottomEdge == topFy) {
-               Some({id: tile.id, pixels: fY});
-             } else if (leftEdge == rightFxy && bottomEdge == topFxy) {
-               Some({id: tile.id, pixels: fXY});
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
-
-let findBottomRightNeighbour = (bottomEdge, rightEdge, tiles) => {
-  tiles
-  |> List.fold_left(
-       (n, tile) =>
-         Option.is_some(n)
-           ? n
-           : {
-             let noFlip = tile.pixels;
-             let fX = flipX(noFlip);
-             let fY = flipY(noFlip);
-             let fXY = flipY(flipX(noFlip));
-             let (topNoFlip, rightNoFlip, bottomNoFlip, leftNoFlip) =
-               getEdges(noFlip);
-             let (topFx, rightFx, bottomFx, leftFx) = getEdges(fX);
-             let (topFy, rightFy, bottomFy, leftFy) = getEdges(fY);
-             let (topFxy, rightFxy, bottomFxy, leftFxy) = getEdges(fXY);
-             if (rightEdge == leftNoFlip && bottomEdge == topNoFlip) {
-               Some({id: tile.id, pixels: tile.pixels});
-             } else if (rightEdge == leftFx && bottomEdge == topFx) {
-               Some({id: tile.id, pixels: fX});
-             } else if (rightEdge == leftFy && bottomEdge == topFy) {
-               Some({id: tile.id, pixels: fY});
-             } else if (rightEdge == leftFxy && bottomEdge == topFxy) {
-               Some({id: tile.id, pixels: fXY});
-             } else {
-               None;
-             };
-           },
-       None,
-     );
-};
-
-let rec placeNeighbours = (grid, current, unplaced, (x, y)) =>
-  if (List.length(unplaced) == 0) {
-    [];
-  } else {
-    let (top, right, bottom, left) = getEdges(current.pixels);
-    let topNeighbour = findTopNeighbour(top, unplaced);
-    let rightNeighbour = findRightNeighbour(right, unplaced);
-    let bottomNeighbour = findBottomNeighbour(bottom, unplaced);
-    let leftNeighbour = findLeftNeighbour(left, unplaced);
-
-    let unplaced =
-      switch (topNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        grid[x][y - 1] = topNeighbour;
-        List.filter(tile => tile.id != id, unplaced);
-      };
-    let unplaced =
-      switch (rightNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        grid[x + 1][y] = rightNeighbour;
-        List.filter(tile => tile.id != id, unplaced);
-      };
-    let unplaced =
-      switch (bottomNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        grid[x][y + 1] = bottomNeighbour;
-        List.filter(tile => tile.id != id, unplaced);
-      };
-    let unplaced =
-      switch (leftNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        grid[x - 1][y] = leftNeighbour;
-        List.filter(tile => tile.id != id, unplaced);
-      };
-
-    let unplaced =
-      switch (topNeighbour, rightNeighbour) {
-      | (Some(topNeighbour), Some(rightNeighbour)) =>
-        let (_, right, _, _) = getEdges(topNeighbour.pixels);
-        let (top, _, _, _) = getEdges(rightNeighbour.pixels);
-        let topRightNeighbour = findTopRightNeighbour(top, right, unplaced);
-        switch (topRightNeighbour) {
-        | None => unplaced
-        | Some({id, pixels}) =>
-          grid[x - 1][y + 1] = topRightNeighbour;
-          List.filter(tile => tile.id != id, unplaced);
-        };
-      | _ => unplaced
-      };
-
-    let unplaced =
-      switch (topNeighbour, leftNeighbour) {
-      | (Some(topNeighbour), Some(leftNeighbour)) =>
-        let (_, _, _, left) = getEdges(topNeighbour.pixels);
-        let (top, _, _, _) = getEdges(leftNeighbour.pixels);
-        let topLeftNeighbour = findTopLeftNeighbour(top, left, unplaced);
-        switch (topLeftNeighbour) {
-        | None => unplaced
-        | Some({id, pixels}) =>
-          grid[x - 1][y - 1] = topLeftNeighbour;
-          List.filter(tile => tile.id != id, unplaced);
-        };
-      | _ => unplaced
-      };
-
-    let unplaced =
-      switch (bottomNeighbour, leftNeighbour) {
-      | (Some(bottomNeighbour), Some(leftNeighbour)) =>
-        let (_, _, _, left) = getEdges(bottomNeighbour.pixels);
-        let (_, _, bottom, _) = getEdges(leftNeighbour.pixels);
-        let bottomLeftNeighbour =
-          findBottomLeftNeighbour(bottom, left, unplaced);
-        switch (bottomLeftNeighbour) {
-        | None => unplaced
-        | Some({id, pixels}) =>
-          grid[x + 1][y - 1] = bottomLeftNeighbour;
-          List.filter(tile => tile.id != id, unplaced);
-        };
-      | _ => unplaced
-      };
-
-    let unplaced =
-      switch (bottomNeighbour, rightNeighbour) {
-      | (Some(bottomNeighbour), Some(rightNeighbour)) =>
-        let (_, right, _, _) = getEdges(bottomNeighbour.pixels);
-        let (_, _, bottom, _) = getEdges(rightNeighbour.pixels);
-        let bottomRightNeighbour =
-          findBottomRightNeighbour(bottom, right, unplaced);
-        switch (bottomRightNeighbour) {
-        | None => unplaced
-        | Some({id, pixels}) =>
-          grid[x + 1][y + 1] = bottomRightNeighbour;
-          List.filter(tile => tile.id != id, unplaced);
-        };
-      | _ => unplaced
-      };
-
-    let unplaced =
-      switch (topNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        placeNeighbours(grid, {id, pixels}, unplaced, (x, y - 1))
-      };
-    let unplaced =
-      switch (rightNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        placeNeighbours(grid, {id, pixels}, unplaced, (x + 1, y))
-      };
-    let unplaced =
-      switch (bottomNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        placeNeighbours(grid, {id, pixels}, unplaced, (x, y + 1))
-      };
-    let unplaced =
-      switch (leftNeighbour) {
-      | None => unplaced
-      | Some({id, pixels}) =>
-        placeNeighbours(grid, {id, pixels}, unplaced, (x - 1, y))
-      };
-    unplaced;
+    List.length(x) == 0
+      ? List.cons(tID, xs) : aux(List.cons(tID, xs), List.hd(x));
   };
+  aux([], tileID);
+};
 
 let run = () => {
   print_endline("---------- Day 20 ----------");
@@ -684,39 +142,67 @@ let run = () => {
        )
     |> (((x, xs)) => List.cons(x, xs) |> List.map(ofStrings));
 
-  let n = int_of_float(sqrt(float_of_int(List.length(tiles))));
+  /* let n = int_of_float(sqrt(float_of_int(List.length(tiles)))); */
+  let lookup = Hashtbl.create(144);
 
-  let grid = Array.make_matrix(6 * n, 6 * n, None);
+  tiles |> List.iter(tile => makeLookup(lookup, tile, tiles));
 
-  grid[3 * n][3 * n] = Some(List.hd(tiles));
+  let (corners, edges, centers) =
+    Hashtbl.fold(
+      (tileID, neighbours, (corners, edges, centers)) =>
+        switch (List.length(neighbours)) {
+        | 2 => (List.cons(tileID, corners), edges, centers)
+        | 3 => (corners, List.cons(tileID, edges), centers)
+        | 4 => (corners, edges, List.cons(tileID, centers))
+        | _ => (corners, edges, centers)
+        },
+      lookup,
+      ([], [], []),
+    );
 
-  let _ =
-    placeNeighbours(grid, List.hd(tiles), List.tl(tiles), (3 * n, 3 * n));
+  let topLeftCorner = List.hd(corners);
+  let edgeHeads = Hashtbl.find(lookup, topLeftCorner);
+  let edge1 = List.hd(edgeHeads);
+  let edge2 = List.hd(List.tl(edgeHeads));
 
-  grid
-  |> Array.iteri((j, row) =>
-       row
-       |> Array.iteri((i, t) =>
-            if (Option.is_some(t)) {
-              Console.log((j, i));
-            }
-          )
-     );
-  /* let grid =
-       grid
-       |> Array.to_list
-       |> List.map(Array.to_list)
-       |> List.filter_map(row => {
-            let clean = row |> List.filter_map(x => x);
-            List.length(clean) == 0 ? None : Some(clean |> Array.of_list);
-          })
-       |> Array.of_list;
+  let topRow = findEdgeRow(lookup, edge1, edges, corners);
+  let leftColoumn = findEdgeRow(lookup, edge2, edges, corners);
 
-     let topLeftId = grid[0][0].id;
-     let topRightId = grid[0][n - 1].id;
-     let bottomLeftId = grid[n - 1][0].id;
-     let bottomRightId = grid[n - 1][n - 1].id;
+  let topRightCorner =
+    List.hd(topRow)
+    |> Hashtbl.find(lookup)
+    |> List.filter(tID => List.mem(tID, corners))
+    |> List.hd;
+  let bottomLeftCorner =
+    List.hd(leftColoumn)
+    |> Hashtbl.find(lookup)
+    |> List.filter(tID => List.mem(tID, corners))
+    |> List.hd;
+  let bottomRightCorner =
+    corners
+    |> List.filter(tID =>
+         tID != topLeftCorner
+         && tID != topRightCorner
+         && tID != bottomLeftCorner
+       )
+    |> List.hd;
 
-     let part1 = topLeftId * topRightId * bottomLeftId * bottomRightId;
-     Console.log("Part 1> " ++ string_of_int(part1)); */
+  let edgeHeads = Hashtbl.find(lookup, bottomRightCorner);
+  let edge1 = List.hd(edgeHeads);
+  let edge2 = List.hd(List.tl(edgeHeads));
+
+  let bottomRow = findEdgeRow(lookup, edge1, edges, corners) |> List.rev;
+  let rightColoumn = findEdgeRow(lookup, edge2, edges, corners) |> List.rev;
+  Console.log(bottomRightCorner);
+  Console.log(bottomRow |> List.hd |> Hashtbl.find(lookup));
+  Console.log(rightColoumn |> List.hd |> Hashtbl.find(lookup));
+
+  Console.log(topRow |> List.map(string_of_int) |> String.concat(" "));
+  Console.log(leftColoumn |> List.map(string_of_int) |> String.concat(" "));
+  Console.log(bottomRow |> List.map(string_of_int) |> String.concat(" "));
+  Console.log(
+    rightColoumn |> List.map(string_of_int) |> String.concat(" "),
+  );
+
+  ();
 };

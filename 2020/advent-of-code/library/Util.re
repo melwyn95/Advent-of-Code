@@ -120,3 +120,10 @@ let keepDups = xs => {
   };
   aux(xs, []);
 };
+
+let rec last = xs =>
+  switch (xs) {
+  | [] => failwith("empty list")
+  | [x] => x
+  | [x, ...xs] => last(xs)
+  };

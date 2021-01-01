@@ -16,3 +16,5 @@ let bin2dec: array(int) => int;
 let dec2bin: int => array(int);
 
 let keepDups: list('a) => list('a);
+
+let last: list('a) => 'a;
