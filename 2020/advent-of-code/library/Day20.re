@@ -130,10 +130,34 @@ let findEdgeRow = (lookup, tileID, edges, corners) => {
   aux([], tileID);
 };
 
+let findInternalRow = (lookup, centers, topRow, leftNeighbour) => {
+  let aux = (xs, centers, topNeighbour, leftNeighbour) => {
+    let tiles =
+      centers
+      |> List.filter_map(center => {
+           let neighbours =
+             Hashtbl.find(lookup, center)
+             |> List.filter(n => n == topNeighbour || n == leftNeighbour);
+
+           List.length(neighbours) == 2 ? Some(center) : None;
+         });
+    let tile = List.hd(tiles);
+    (List.cons(tile, xs), centers |> List.filter(c => c != tile), tile);
+  };
+  let (xs, centers, _) =
+    topRow
+    |> List.fold_left(
+         ((xs, centers, leftNeighbour), topNeighbour) =>
+           aux(xs, centers, topNeighbour, leftNeighbour),
+         ([], centers, leftNeighbour),
+       );
+  (xs |> List.rev, centers);
+};
+
 let run = () => {
   print_endline("---------- Day 20 ----------");
   let tiles =
-    Util.getLinesFromFile(path)
+    Util.getLinesFromFile(testPath)
     |> List.fold_left(
          ((curr, acc), line) =>
            line == ""
@@ -142,8 +166,8 @@ let run = () => {
        )
     |> (((x, xs)) => List.cons(x, xs) |> List.map(ofStrings));
 
-  /* let n = int_of_float(sqrt(float_of_int(List.length(tiles)))); */
-  let lookup = Hashtbl.create(144);
+  let n = int_of_float(sqrt(float_of_int(List.length(tiles))));
+  let lookup = Hashtbl.create(List.length(tiles));
 
   tiles |> List.iter(tile => makeLookup(lookup, tile, tiles));
 
@@ -165,18 +189,20 @@ let run = () => {
   let edge1 = List.hd(edgeHeads);
   let edge2 = List.hd(List.tl(edgeHeads));
 
-  let topRow = findEdgeRow(lookup, edge1, edges, corners);
-  let leftColoumn = findEdgeRow(lookup, edge2, edges, corners);
+  let topRow = findEdgeRow(lookup, edge1, edges, corners) |> List.rev;
+  let leftColoumn = findEdgeRow(lookup, edge2, edges, corners) |> List.rev;
 
+  let c = corners |> List.filter(c' => c' != topLeftCorner);
   let topRightCorner =
-    List.hd(topRow)
+    Util.last(topRow)
     |> Hashtbl.find(lookup)
-    |> List.filter(tID => List.mem(tID, corners))
+    |> List.filter(tID => List.mem(tID, c))
     |> List.hd;
+  let c = c |> List.filter(c' => c' != topRightCorner);
   let bottomLeftCorner =
-    List.hd(leftColoumn)
+    Util.last(leftColoumn)
     |> Hashtbl.find(lookup)
-    |> List.filter(tID => List.mem(tID, corners))
+    |> List.filter(tID => List.mem(tID, c))
     |> List.hd;
   let bottomRightCorner =
     corners
@@ -191,18 +217,45 @@ let run = () => {
   let edge1 = List.hd(edgeHeads);
   let edge2 = List.hd(List.tl(edgeHeads));
 
-  let bottomRow = findEdgeRow(lookup, edge1, edges, corners) |> List.rev;
-  let rightColoumn = findEdgeRow(lookup, edge2, edges, corners) |> List.rev;
-  Console.log(bottomRightCorner);
-  Console.log(bottomRow |> List.hd |> Hashtbl.find(lookup));
-  Console.log(rightColoumn |> List.hd |> Hashtbl.find(lookup));
+  let bottomRow = findEdgeRow(lookup, edge1, edges, corners);
+  let rightColoumn = findEdgeRow(lookup, edge2, edges, corners);
 
-  Console.log(topRow |> List.map(string_of_int) |> String.concat(" "));
-  Console.log(leftColoumn |> List.map(string_of_int) |> String.concat(" "));
-  Console.log(bottomRow |> List.map(string_of_int) |> String.concat(" "));
-  Console.log(
-    rightColoumn |> List.map(string_of_int) |> String.concat(" "),
-  );
+  let (internalRowsLR, _, _) =
+    leftColoumn
+    |> List.fold_left(
+         ((xs, centers, topRow), leftftNeighbour) => {
+           let (internalRow, centers) =
+             findInternalRow(lookup, centers, topRow, leftftNeighbour);
+           (List.cons(internalRow, xs), centers, internalRow);
+         },
+         ([], centers, topRow),
+       );
+
+  let internalRowsLR = internalRowsLR |> List.rev;
+
+  let grid = Array.make_matrix(n, n, -1);
+
+  grid[0][0] = topLeftCorner;
+  grid[0][n - 1] = topRightCorner;
+  grid[n - 1][0] = bottomLeftCorner;
+  grid[n - 1][n - 1] = bottomRightCorner;
+
+  topRow |> List.iteri((i, tileID) => grid[0][i + 1] = tileID);
+  bottomRow |> List.iteri((i, tileID) => grid[n - 1][i + 1] = tileID);
+  leftColoumn |> List.iteri((i, tileID) => grid[i + 1][0] = tileID);
+  rightColoumn |> List.iteri((i, tileID) => grid[i + 1][n - 1] = tileID);
+
+  internalRowsLR
+  |> List.iteri((i, row) =>
+       row |> List.iteri((j, tileID) => grid[i + 1][j + 1] = tileID)
+     );
+
+  grid
+  |> Array.iter(row => {
+       row
+       |> Array.iter(tiledID => print_string(string_of_int(tiledID) ++ " "));
+       print_string("\n");
+     });
 
   ();
 };
