@@ -616,6 +616,21 @@ let fixFlips = (tile, right, bottom) => {
   {id: tile.id, pixels: fixedPixels^};
 };
 
+let removeBorder = xss => {
+  let n = Array.length(xss);
+  let pixels = Array.make_matrix(n - 2, n - 2, 0);
+  xss
+  |> Array.iteri((i, xs) =>
+       xs
+       |> Array.iteri((j, _) =>
+            if (i >= 1 && j >= 1 && j <= n - 2 && i <= n - 2) {
+              pixels[i - 1][j - 1] = xss[i][j];
+            }
+          )
+     );
+  pixels;
+};
+
 let run = () => {
   print_endline("---------- Day 20 ----------");
   let tiles =
@@ -757,24 +772,54 @@ let run = () => {
           )
      });
 
-  Console.log("0 0");
-  printPixels(grid[0][0].pixels);
-  Console.log("0 1");
-  printPixels(grid[0][1].pixels);
-  Console.log("0 2");
-  printPixels(grid[0][2].pixels);
-  Console.log("1 0");
-  printPixels(grid[1][0].pixels);
-  Console.log("1 1");
-  printPixels(grid[1][1].pixels);
-  Console.log("1 2");
-  printPixels(grid[1][2].pixels);
-  Console.log("2 0");
-  printPixels(grid[2][0].pixels);
-  Console.log("2 1");
-  printPixels(grid[2][1].pixels);
-  Console.log("2 2");
-  printPixels(grid[2][2].pixels);
+  grid
+  |> Array.iteri((i, row) => {
+       row
+       |> Array.iteri((j, tile) => {
+            grid[i][j] = {id: tile.id, pixels: removeBorder(tile.pixels)}
+          })
+     });
+
+  let m = Array.length(grid[0][0].pixels);
+
+  let image = Array.make_matrix(n * m, n * m, 0);
+
+  grid
+  |> Array.iteri((i, row) => {
+       row
+       |> Array.iteri((j, tile) => {
+            let baseI = i * m;
+            let baseJ = j * m;
+            grid[i][j].pixels
+            |> Array.iteri((x, xs) =>
+                 xs
+                 |> Array.iteri((y, _) => {
+                      image[baseI + x][baseJ + y] = grid[i][j].pixels[x][y]
+                    })
+               );
+          })
+     });
+
+  printPixels(image);
+
+  /* Console.log("0 0");
+     printPixels(grid[0][0].pixels);
+     Console.log("0 1");
+     printPixels(grid[0][1].pixels);
+     Console.log("0 2");
+     printPixels(grid[0][2].pixels);
+     Console.log("1 0");
+     printPixels(grid[1][0].pixels);
+     Console.log("1 1");
+     printPixels(grid[1][1].pixels);
+     Console.log("1 2");
+     printPixels(grid[1][2].pixels);
+     Console.log("2 0");
+     printPixels(grid[2][0].pixels);
+     Console.log("2 1");
+     printPixels(grid[2][1].pixels);
+     Console.log("2 2");
+     printPixels(grid[2][2].pixels); */
 
   ();
 };
