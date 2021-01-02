@@ -200,6 +200,214 @@ let findMatchingEdge = (edges, pixels) => {
   matchingEdge;
 };
 
+let fixFlipsLastRow = (tile, top, right) => {
+  let pixels = tile.pixels;
+  let (top', right', bottom', left') = getEdges(pixels);
+  let (topFX', rightFX', bottomFX', leftFX') = getEdges(flipX(pixels));
+  let (topFY', rightFY', bottomFY', leftFY') = getEdges(flipY(pixels));
+  let (topFXY', rightFXY', bottomFXY', leftFXY') =
+    getEdges(flipY(flipX(pixels)));
+
+  let edges = [
+    top',
+    right',
+    bottom',
+    left',
+    topFX',
+    rightFX',
+    bottomFX',
+    leftFX',
+    topFY',
+    rightFY',
+    bottomFY',
+    leftFY',
+  ];
+
+  let topMatchingEdges = findMatchingEdge(edges, top.pixels);
+  let rightMatchingEdges = findMatchingEdge(edges, right.pixels);
+
+  let isDone = ref(false);
+  let fixedPixels = ref([|[||]|]);
+
+  topMatchingEdges
+  |> List.iter(topMatchingEdge => {
+       rightMatchingEdges
+       |> List.iter(rightMatchingEdge =>
+            if (! isDone^) {
+              let pixels =
+                if ((
+                      rightMatchingEdge == topFY'
+                      || rightMatchingEdge == rightFY'
+                      || rightMatchingEdge == bottomFY'
+                      || rightMatchingEdge == leftFY'
+                    )
+                    && (
+                      topMatchingEdge == topFY'
+                      || topMatchingEdge == rightFY'
+                      || topMatchingEdge == bottomFY'
+                      || topMatchingEdge == leftFY'
+                    )) {
+                  flipY(pixels);
+                } else if ((
+                             rightMatchingEdge == topFX'
+                             || rightMatchingEdge == rightFX'
+                             || rightMatchingEdge == bottomFX'
+                             || rightMatchingEdge == leftFX'
+                           )
+                           && (
+                             topMatchingEdge == topFX'
+                             || topMatchingEdge == rightFX'
+                             || topMatchingEdge == bottomFX'
+                             || topMatchingEdge == leftFX'
+                           )) {
+                  flipX(pixels);
+                } else if ((
+                             rightMatchingEdge == topFXY'
+                             || rightMatchingEdge == rightFXY'
+                             || rightMatchingEdge == bottomFXY'
+                             || rightMatchingEdge == leftFXY'
+                           )
+                           && (
+                             topMatchingEdge == topFXY'
+                             || topMatchingEdge == rightFXY'
+                             || topMatchingEdge == bottomFXY'
+                             || topMatchingEdge == leftFXY'
+                           )) {
+                  flipY(flipX(pixels));
+                } else {
+                  pixels;
+                };
+
+              let (top', right', bottom', left') = getEdges(pixels);
+              let pixels =
+                if (rightMatchingEdge == bottom') {
+                  rotate90(rotate90(rotate90(pixels)));
+                } else if (rightMatchingEdge == left') {
+                  rotate90(rotate90(pixels));
+                } else if (rightMatchingEdge == top') {
+                  rotate90(pixels);
+                } else if (rightMatchingEdge == right') {
+                  pixels;
+                } else {
+                  pixels;
+                };
+              let (top', right', bottom', left') = getEdges(pixels);
+              if (rightMatchingEdge == right' && topMatchingEdge == top') {
+                Console.log("BOOM");
+                isDone := true;
+                fixedPixels := pixels;
+              };
+            }
+          )
+     });
+
+  {id: tile.id, pixels: fixedPixels^};
+};
+
+let fixFlipsLastColumn = (tile, left, bottom) => {
+  let pixels = tile.pixels;
+  let (top', right', bottom', left') = getEdges(pixels);
+  let (topFX', rightFX', bottomFX', leftFX') = getEdges(flipX(pixels));
+  let (topFY', rightFY', bottomFY', leftFY') = getEdges(flipY(pixels));
+  let (topFXY', rightFXY', bottomFXY', leftFXY') =
+    getEdges(flipY(flipX(pixels)));
+
+  let edges = [
+    top',
+    right',
+    bottom',
+    left',
+    topFX',
+    rightFX',
+    bottomFX',
+    leftFX',
+    topFY',
+    rightFY',
+    bottomFY',
+    leftFY',
+  ];
+
+  let leftMatchingEdges = findMatchingEdge(edges, left.pixels);
+  let bottomMatchingEdges = findMatchingEdge(edges, bottom.pixels);
+
+  let isDone = ref(false);
+  let fixedPixels = ref([|[||]|]);
+
+  leftMatchingEdges
+  |> List.iter(leftMatchingEdge => {
+       bottomMatchingEdges
+       |> List.iter(bottomMatchingEdge =>
+            if (! isDone^) {
+              let pixels =
+                if ((
+                      bottomMatchingEdge == topFY'
+                      || bottomMatchingEdge == rightFY'
+                      || bottomMatchingEdge == bottomFY'
+                      || bottomMatchingEdge == leftFY'
+                    )
+                    && (
+                      leftMatchingEdge == topFY'
+                      || leftMatchingEdge == rightFY'
+                      || leftMatchingEdge == bottomFY'
+                      || leftMatchingEdge == leftFY'
+                    )) {
+                  flipY(pixels);
+                } else if ((
+                             bottomMatchingEdge == topFX'
+                             || bottomMatchingEdge == rightFX'
+                             || bottomMatchingEdge == bottomFX'
+                             || bottomMatchingEdge == leftFX'
+                           )
+                           && (
+                             leftMatchingEdge == topFX'
+                             || leftMatchingEdge == rightFX'
+                             || leftMatchingEdge == bottomFX'
+                             || leftMatchingEdge == leftFX'
+                           )) {
+                  flipX(pixels);
+                } else if ((
+                             bottomMatchingEdge == topFXY'
+                             || bottomMatchingEdge == rightFXY'
+                             || bottomMatchingEdge == bottomFXY'
+                             || bottomMatchingEdge == leftFXY'
+                           )
+                           && (
+                             leftMatchingEdge == topFXY'
+                             || leftMatchingEdge == rightFXY'
+                             || leftMatchingEdge == bottomFXY'
+                             || leftMatchingEdge == leftFXY'
+                           )) {
+                  flipY(flipX(pixels));
+                } else {
+                  pixels;
+                };
+
+              let (top', right', bottom', left') = getEdges(pixels);
+              let pixels =
+                if (leftMatchingEdge == bottom') {
+                  rotate90(pixels);
+                } else if (leftMatchingEdge == left') {
+                  pixels;
+                } else if (leftMatchingEdge == top') {
+                  rotate90(rotate90(rotate90(pixels)));
+                } else if (leftMatchingEdge == right') {
+                  rotate90(rotate90(pixels));
+                } else {
+                  pixels;
+                };
+              let (top', right', bottom', left') = getEdges(pixels);
+              if (leftMatchingEdge == left' && bottomMatchingEdge == bottom') {
+                Console.log("BOOM");
+                isDone := true;
+                fixedPixels := pixels;
+              };
+            }
+          )
+     });
+
+  {id: tile.id, pixels: fixedPixels^};
+};
+
 let fixFlips = (tile, right, bottom) => {
   let pixels = tile.pixels;
   let (top', right', bottom', left') = getEdges(pixels);
@@ -307,7 +515,7 @@ let fixFlips = (tile, right, bottom) => {
 let run = () => {
   print_endline("---------- Day 20 ----------");
   let tiles =
-    Util.getLinesFromFile(testPath)
+    Util.getLinesFromFile(path)
     |> List.fold_left(
          ((curr, acc), line) =>
            line == ""
@@ -428,6 +636,16 @@ let run = () => {
             if (j + 1 < n && i + 1 < n) {
               grid[i][j] =
                 fixFlips(grid[i][j], grid[i][j + 1], grid[i + 1][j]);
+            } else if (j - 1 >= 0 && i + 1 < n) {
+              grid[i][j] =
+                fixFlipsLastColumn(
+                  grid[i][j],
+                  grid[i][j - 1],
+                  grid[i + 1][j],
+                );
+            } else if (i - 1 >= 0 && j + 1 < n) {
+              grid[i][j] =
+                fixFlipsLastRow(grid[i][j], grid[i - 1][j], grid[i][j + 1]);
             }
           )
      });
