@@ -127,3 +127,17 @@ let rec last = xs =>
   | [x] => x
   | [x, ...xs] => last(xs)
   };
+
+let removeDups = xs => {
+  let hashtb = Hashtbl.create(List.length(xs));
+  xs
+  |> List.iter(x =>
+       if (Hashtbl.mem(hashtb, x)) {
+         let count = Hashtbl.find(hashtb, x);
+         Hashtbl.replace(hashtb, x, count + 1);
+       } else {
+         Hashtbl.add(hashtb, x, 1);
+       }
+     );
+  xs |> List.filter(x => Hashtbl.find(hashtb, x) == 1);
+};

@@ -18,3 +18,5 @@ let dec2bin: int => array(int);
 let keepDups: list('a) => list('a);
 
 let last: list('a) => 'a;
+
+let removeDups: list('a) => list('a);

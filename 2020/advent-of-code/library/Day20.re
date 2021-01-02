@@ -6,9 +6,21 @@ type tile = {
   pixels: array(array(int)),
 };
 
-let flipX = xs => xs |> Array.to_list |> List.rev |> Array.of_list;
+let makeEmptyTile = () => {id: (-1), pixels: [|[||]|]};
+
+let printPixels = xys =>
+  xys
+  |> Array.map(Array.to_list)
+  |> Array.iter(r =>
+       Console.log(String.concat(" ", r |> List.map(string_of_int)))
+     );
+
+let flipX = xs =>
+  xs |> Array.copy |> Array.to_list |> List.rev |> Array.of_list;
 let flipY = xs =>
-  xs |> Array.map(r => r |> Array.to_list |> List.rev |> Array.of_list);
+  xs
+  |> Array.copy
+  |> Array.map(r => r |> Array.to_list |> List.rev |> Array.of_list);
 let rotate90 = xs => {
   let n = Array.length(xs);
   let matrix = Array.make_matrix(n, n, 0);
@@ -20,10 +32,19 @@ let rotate90 = xs => {
 };
 let getEdges = p => {
   let len = Array.length(p);
+  let p = Array.copy(p);
   let top = p[0] |> Util.bin2dec;
-  let bottom = p[len - 1] |> Util.bin2dec;
-  let left = p |> Array.map(row => row[0]) |> Util.bin2dec;
   let right = p |> Array.map(row => row[len - 1]) |> Util.bin2dec;
+  let bottom =
+    p[len - 1] |> Array.to_list |> List.rev |> Array.of_list |> Util.bin2dec;
+  let left =
+    p
+    |> Array.map(row => row[0])
+    |> Array.to_list
+    |> List.rev
+    |> Array.of_list
+    |> Util.bin2dec;
+
   (top, right, bottom, left);
 };
 
@@ -154,6 +175,135 @@ let findInternalRow = (lookup, centers, topRow, leftNeighbour) => {
   (xs |> List.rev, centers);
 };
 
+let findMatchingEdge = (edges, pixels) => {
+  let (top', right', bottom', left') = getEdges(pixels);
+  let (topFX', rightFX', bottomFX', leftFX') = getEdges(flipX(pixels));
+  let (topFY', rightFY', bottomFY', leftFY') = getEdges(flipY(pixels));
+  let matchingEdge =
+    [
+      top',
+      right',
+      bottom',
+      left',
+      topFX',
+      rightFX',
+      bottomFX',
+      leftFX',
+      topFY',
+      rightFY',
+      bottomFY',
+      leftFY',
+    ]
+    |> List.filter(edge => List.mem(edge, edges))
+    |> List.sort_uniq(Stdlib.compare);
+
+  matchingEdge;
+};
+
+let fixFlips = (tile, right, bottom) => {
+  let pixels = tile.pixels;
+  let (top', right', bottom', left') = getEdges(pixels);
+  let (topFX', rightFX', bottomFX', leftFX') = getEdges(flipX(pixels));
+  let (topFY', rightFY', bottomFY', leftFY') = getEdges(flipY(pixels));
+  let (topFXY', rightFXY', bottomFXY', leftFXY') =
+    getEdges(flipY(flipX(pixels)));
+
+  let edges = [
+    top',
+    right',
+    bottom',
+    left',
+    topFX',
+    rightFX',
+    bottomFX',
+    leftFX',
+    topFY',
+    rightFY',
+    bottomFY',
+    leftFY',
+  ];
+
+  let rightMatchingEdges = findMatchingEdge(edges, right.pixels);
+  let bottomMatchingEdges = findMatchingEdge(edges, bottom.pixels);
+
+  let isDone = ref(false);
+  let fixedPixels = ref([|[||]|]);
+
+  rightMatchingEdges
+  |> List.iter(rightMatchingEdge => {
+       bottomMatchingEdges
+       |> List.iter(bottomMatchingEdge =>
+            if (! isDone^) {
+              let pixels =
+                if ((
+                      bottomMatchingEdge == topFY'
+                      || bottomMatchingEdge == rightFY'
+                      || bottomMatchingEdge == bottomFY'
+                      || bottomMatchingEdge == leftFY'
+                    )
+                    && (
+                      rightMatchingEdge == topFY'
+                      || rightMatchingEdge == rightFY'
+                      || rightMatchingEdge == bottomFY'
+                      || rightMatchingEdge == leftFY'
+                    )) {
+                  flipY(pixels);
+                } else if ((
+                             bottomMatchingEdge == topFX'
+                             || bottomMatchingEdge == rightFX'
+                             || bottomMatchingEdge == bottomFX'
+                             || bottomMatchingEdge == leftFX'
+                           )
+                           && (
+                             rightMatchingEdge == topFX'
+                             || rightMatchingEdge == rightFX'
+                             || rightMatchingEdge == bottomFX'
+                             || rightMatchingEdge == leftFX'
+                           )) {
+                  flipX(pixels);
+                } else if ((
+                             bottomMatchingEdge == topFXY'
+                             || bottomMatchingEdge == rightFXY'
+                             || bottomMatchingEdge == bottomFXY'
+                             || bottomMatchingEdge == leftFXY'
+                           )
+                           && (
+                             rightMatchingEdge == topFXY'
+                             || rightMatchingEdge == rightFXY'
+                             || rightMatchingEdge == bottomFXY'
+                             || rightMatchingEdge == leftFXY'
+                           )) {
+                  flipY(flipX(pixels));
+                } else {
+                  pixels;
+                };
+
+              let (top', right', bottom', left') = getEdges(pixels);
+              let pixels =
+                if (rightMatchingEdge == bottom') {
+                  rotate90(rotate90(rotate90(pixels)));
+                } else if (rightMatchingEdge == left') {
+                  rotate90(rotate90(pixels));
+                } else if (rightMatchingEdge == top') {
+                  rotate90(pixels);
+                } else if (rightMatchingEdge == right') {
+                  pixels;
+                } else {
+                  pixels;
+                };
+              let (top', right', bottom', left') = getEdges(pixels);
+              if (rightMatchingEdge == right' && bottomMatchingEdge == bottom') {
+                Console.log("BOOM");
+                isDone := true;
+                fixedPixels := pixels;
+              };
+            }
+          )
+     });
+
+  {id: tile.id, pixels: fixedPixels^};
+};
+
 let run = () => {
   print_endline("---------- Day 20 ----------");
   let tiles =
@@ -233,29 +383,73 @@ let run = () => {
 
   let internalRowsLR = internalRowsLR |> List.rev;
 
-  let grid = Array.make_matrix(n, n, -1);
+  let grid = Array.make_matrix(n, n, makeEmptyTile());
 
-  grid[0][0] = topLeftCorner;
-  grid[0][n - 1] = topRightCorner;
-  grid[n - 1][0] = bottomLeftCorner;
-  grid[n - 1][n - 1] = bottomRightCorner;
+  grid[0][0] = List.find(tile => tile.id == topLeftCorner, tiles);
+  grid[0][n - 1] = List.find(tile => tile.id == topRightCorner, tiles);
+  grid[n - 1][0] = List.find(tile => tile.id == bottomLeftCorner, tiles);
+  grid[n - 1][n - 1] = List.find(tile => tile.id == bottomRightCorner, tiles);
 
-  topRow |> List.iteri((i, tileID) => grid[0][i + 1] = tileID);
-  bottomRow |> List.iteri((i, tileID) => grid[n - 1][i + 1] = tileID);
-  leftColoumn |> List.iteri((i, tileID) => grid[i + 1][0] = tileID);
-  rightColoumn |> List.iteri((i, tileID) => grid[i + 1][n - 1] = tileID);
+  topRow
+  |> List.iteri((i, tileID) =>
+       grid[0][i + 1] = List.find(tile => tile.id == tileID, tiles)
+     );
+  bottomRow
+  |> List.iteri((i, tileID) =>
+       grid[n - 1][i + 1] = List.find(tile => tile.id == tileID, tiles)
+     );
+  leftColoumn
+  |> List.iteri((i, tileID) =>
+       grid[i + 1][0] = List.find(tile => tile.id == tileID, tiles)
+     );
+  rightColoumn
+  |> List.iteri((i, tileID) =>
+       grid[i + 1][n - 1] = List.find(tile => tile.id == tileID, tiles)
+     );
 
   internalRowsLR
   |> List.iteri((i, row) =>
-       row |> List.iteri((j, tileID) => grid[i + 1][j + 1] = tileID)
+       row
+       |> List.iteri((j, tileID) =>
+            grid[i + 1][j + 1] = List.find(tile => tile.id == tileID, tiles)
+          )
      );
 
+  /* grid
+     |> Array.iter(row => {
+          row |> Array.iter(tile => print_string(string_of_int(tile.id) ++ " "));
+          print_string("\n");
+        }); */
+
   grid
-  |> Array.iter(row => {
+  |> Array.iteri((i, row) => {
        row
-       |> Array.iter(tiledID => print_string(string_of_int(tiledID) ++ " "));
-       print_string("\n");
+       |> Array.iteri((j, tile) =>
+            if (j + 1 < n && i + 1 < n) {
+              grid[i][j] =
+                fixFlips(grid[i][j], grid[i][j + 1], grid[i + 1][j]);
+            }
+          )
      });
+
+  Console.log("0 0");
+  printPixels(grid[0][0].pixels);
+  Console.log("0 1");
+  printPixels(grid[0][1].pixels);
+  Console.log("0 2");
+  printPixels(grid[0][2].pixels);
+  Console.log("1 0");
+  printPixels(grid[1][0].pixels);
+  Console.log("1 1");
+  printPixels(grid[1][1].pixels);
+  Console.log("1 2");
+  printPixels(grid[1][2].pixels);
+  Console.log("2 0");
+  printPixels(grid[2][0].pixels);
+  Console.log("2 1");
+  printPixels(grid[2][1].pixels);
+  Console.log("2 2");
+  printPixels(grid[2][2].pixels);
 
   ();
 };
