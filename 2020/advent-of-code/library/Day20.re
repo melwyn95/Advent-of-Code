@@ -293,7 +293,7 @@ let fixLastPixel = (tile, top, left) => {
                 };
               let (top', right', bottom', left') = getEdges(pixels);
               if (leftMatchingEdge == left' && topMatchingEdge == top') {
-                Console.log("BOOM");
+                /* Console.log("BOOM"); */
                 isDone := true;
                 fixedPixels := pixels;
               };
@@ -397,7 +397,7 @@ let fixFlipsLastRow = (tile, top, right) => {
                 };
               let (top', right', bottom', left') = getEdges(pixels);
               if (rightMatchingEdge == right' && topMatchingEdge == top') {
-                Console.log("BOOM");
+                /* Console.log("BOOM"); */
                 isDone := true;
                 fixedPixels := pixels;
               };
@@ -501,7 +501,7 @@ let fixFlipsLastColumn = (tile, left, bottom) => {
                 };
               let (top', right', bottom', left') = getEdges(pixels);
               if (leftMatchingEdge == left' && bottomMatchingEdge == bottom') {
-                Console.log("BOOM");
+                /* Console.log("BOOM"); */
                 isDone := true;
                 fixedPixels := pixels;
               };
@@ -605,7 +605,7 @@ let fixFlips = (tile, right, bottom) => {
                 };
               let (top', right', bottom', left') = getEdges(pixels);
               if (rightMatchingEdge == right' && bottomMatchingEdge == bottom') {
-                Console.log("BOOM");
+                /* Console.log("BOOM"); */
                 isDone := true;
                 fixedPixels := pixels;
               };
@@ -631,10 +631,78 @@ let removeBorder = xss => {
   pixels;
 };
 
+let isSeaMonsterFound = (image, i, j) => {
+  image[i][j + 18] == 1
+  && image[i + 1][j] == 1
+  && image[i + 1][j + 5] == 1
+  && image[i + 1][j + 6] == 1
+  && image[i + 1][j + 11] == 1
+  && image[i + 1][j + 12] == 1
+  && image[i + 1][j + 17] == 1
+  && image[i + 1][j + 18] == 1
+  && image[i + 1][j + 19] == 1
+  && image[i + 2][j + 1] == 1
+  && image[i + 2][j + 4] == 1
+  && image[i + 2][j + 7] == 1
+  && image[i + 2][j + 10] == 1
+  && image[i + 2][j + 13] == 1
+  && image[i + 2][j + 16] == 1;
+};
+
+let transformImage = (image, transform) => {
+  switch (transform) {
+  | 1 => image
+  | 2 => rotate90(image)
+  | 3 => rotate90(rotate90(image))
+  | 4 => rotate90(rotate90(rotate90(image)))
+  | 5 => flipX(image)
+  | 6 => flipX(rotate90(image))
+  | 7 => flipX(rotate90(rotate90(image)))
+  | 8 => flipX(rotate90(rotate90(rotate90(image))))
+  | 9 => flipY(image)
+  | 10 => flipY(rotate90(image))
+  | 11 => flipY(rotate90(rotate90(image)))
+  | 12 => flipY(rotate90(rotate90(rotate90(image))))
+  | 13 => flipY(flipX(image))
+  | 14 => flipY(flipX(rotate90(image)))
+  | 15 => flipY(flipX(rotate90(rotate90(image))))
+  | 16 => flipY(flipX(rotate90(rotate90(rotate90(image)))))
+  | _ => image
+  };
+};
+
+let findSeaMonsters = image => {
+  let n = Array.length(image);
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  |> List.fold_left(
+       ((b, sm), transform) => {
+         b
+           ? (b, sm)
+           : {
+             let seaMonsers = ref(0);
+             let newImage = transformImage(image, transform);
+             newImage
+             |> Array.iteri((i, xs) =>
+                  xs
+                  |> Array.iteri((j, _) =>
+                       if (i < n - 2 && j < n - 19) {
+                         if (isSeaMonsterFound(newImage, i, j)) {
+                           seaMonsers := seaMonsers^ + 1;
+                         };
+                       }
+                     )
+                );
+             (seaMonsers^ > 0, seaMonsers^);
+           }
+       },
+       (false, 0),
+     );
+};
+
 let run = () => {
   print_endline("---------- Day 20 ----------");
   let tiles =
-    Util.getLinesFromFile(testPath)
+    Util.getLinesFromFile(path)
     |> List.fold_left(
          ((curr, acc), line) =>
            line == ""
@@ -742,12 +810,6 @@ let run = () => {
           )
      );
 
-  /* grid
-     |> Array.iter(row => {
-          row |> Array.iter(tile => print_string(string_of_int(tile.id) ++ " "));
-          print_string("\n");
-        }); */
-
   grid
   |> Array.iteri((i, row) => {
        row
@@ -800,26 +862,23 @@ let run = () => {
           })
      });
 
-  printPixels(image);
+  let blackPixels =
+    image
+    |> Array.fold_left(
+         (count, xs) =>
+           xs |> Array.fold_left((c, x) => x == 1 ? c + 1 : c, count),
+         0,
+       );
 
-  /* Console.log("0 0");
-     printPixels(grid[0][0].pixels);
-     Console.log("0 1");
-     printPixels(grid[0][1].pixels);
-     Console.log("0 2");
-     printPixels(grid[0][2].pixels);
-     Console.log("1 0");
-     printPixels(grid[1][0].pixels);
-     Console.log("1 1");
-     printPixels(grid[1][1].pixels);
-     Console.log("1 2");
-     printPixels(grid[1][2].pixels);
-     Console.log("2 0");
-     printPixels(grid[2][0].pixels);
-     Console.log("2 1");
-     printPixels(grid[2][1].pixels);
-     Console.log("2 2");
-     printPixels(grid[2][2].pixels); */
+  let (_, seaMonsters) = findSeaMonsters(image);
+  let blackPixelsInSeaMoster = 15;
+
+  let blackPixels = blackPixels - seaMonsters * blackPixelsInSeaMoster;
+
+  let part1 = corners |> List.fold_left(( * ), 1);
+  Console.log("Part 1> " ++ string_of_int(part1));
+
+  Console.log("Part 2> " ++ string_of_int(blackPixels));
 
   ();
 };

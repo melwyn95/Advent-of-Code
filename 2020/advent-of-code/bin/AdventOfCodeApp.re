@@ -1,6 +1,6 @@
 print_newline();
 
-/* Library.Day1.run();
+Library.Day1.run();
 Library.Day2.run();
 Library.Day3.run();
 Library.Day4.run();
@@ -18,10 +18,10 @@ Library.Day15.run();
 Library.Day16.run();
 Library.Day17.run();
 Library.Day18.run();
-Library.Day19.run(); */
+Library.Day19.run();
 Library.Day20.run();
-/* Library.Day21.run();
+Library.Day21.run();
 Library.Day22.run();
 Library.Day23.run();
 Library.Day24.run();
-Library.Day25.run(); */
+Library.Day25.run();

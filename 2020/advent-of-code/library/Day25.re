@@ -30,13 +30,14 @@ let transform = (subjectNumber, loopSize) => {
 };
 
 let run = () => {
+  print_endline("---------- Day 25 ----------");
   let input = input;
   let loopSizeCard = reverseTransform(input.card);
-  let loopSizeDoor = reverseTransform(input.door);
+  /* let loopSizeDoor = reverseTransform(input.door); */
 
   let encryptionKey = transform(input.door, loopSizeCard);
 
-  Console.log(("card", loopSizeCard));
-  Console.log(("door", loopSizeDoor));
-  Console.log(("enc key", encryptionKey));
+  /* Console.log(("card", loopSizeCard));
+     Console.log(("door", loopSizeDoor)); */
+  Console.log("Part 1> " ++ string_of_int(encryptionKey));
 };
