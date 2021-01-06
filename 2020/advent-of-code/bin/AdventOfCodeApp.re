@@ -1,14 +1,14 @@
 print_newline();
 
-Library.Day1.run();
-Library.Day2.run();
-Library.Day3.run();
-Library.Day4.run();
-Library.Day5.run();
-Library.Day6.run();
-Library.Day7.run();
-Library.Day8.run();
-Library.Day9.run();
+Library.Day01.run();
+Library.Day02.run();
+Library.Day03.run();
+Library.Day04.run();
+Library.Day05.run();
+Library.Day06.run();
+Library.Day07.run();
+Library.Day08.run();
+Library.Day09.run();
 Library.Day10.run();
 Library.Day11.run();
 Library.Day12.run();
