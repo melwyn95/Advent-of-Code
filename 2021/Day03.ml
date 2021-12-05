@@ -1,3 +1,5 @@
+Printf.printf "========== DAY 3 ==========\n" ;;
+
 let read_file_lines filename =
   let ch = open_in filename in
   let s = String.split_on_char '\n' @@ really_input_string ch (in_channel_length ch) in
@@ -54,7 +56,6 @@ let epsilon_rate = int_of_bin lcb ;;
 
 let part1 = gamma_rate * epsilon_rate ;;
 
-Printf.printf "========== DAY 3 ==========\n" ;;
 Printf.printf "Part 1> %d\n" part1 ;;
 
 let generator_rating f report =

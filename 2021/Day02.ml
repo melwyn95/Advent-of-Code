@@ -1,3 +1,5 @@
+Printf.printf "========== DAY 2 ==========\n" ;;
+
 let read_file_lines filename =
   let ch = open_in filename in
   let s = String.split_on_char '\n' @@ really_input_string ch (in_channel_length ch) in
@@ -33,7 +35,6 @@ let (x, y) = List.fold_left apply_command (0, 0) commands ;;
 
 let part1 = x * y ;;
 
-Printf.printf "========== DAY 2 ==========\n" ;;
 Printf.printf "Part 1> %d\n" part1 ;;
 
 let apply_command (x, y, aim) =

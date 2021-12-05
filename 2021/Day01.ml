@@ -1,3 +1,5 @@
+Printf.printf "========== DAY 1 ==========\n" ;;
+
 let read_file_lines filename =
   let ch = open_in filename in
   let s = String.split_on_char '\n' @@ really_input_string ch (in_channel_length ch) in
@@ -15,7 +17,6 @@ let diff xs = snd @@ List.fold_left
 
 let part1 = diff input ;;
 
-Printf.printf "========== DAY 1 ==========\n" ;;
 Printf.printf "Part 1> %d\n" part1 ;;
 
 let triplets xs =

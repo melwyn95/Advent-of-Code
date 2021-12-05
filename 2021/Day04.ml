@@ -1,3 +1,5 @@
+Printf.printf "========== DAY 4 ==========\n" ;;
+
 let read_file_lines filename =
   let ch = open_in filename in
   let s = String.split_on_char '\n' @@ really_input_string ch (in_channel_length ch) in
@@ -121,8 +123,6 @@ let play draw_numbers boards =
   ) (None, boards) draw_numbers ;;
 
 let board_opt, boards = play draw_numbers boards ;;
-
-Printf.printf "========== DAY 4 ==========\n" ;;
 
 let part1 = 
   match board_opt with
