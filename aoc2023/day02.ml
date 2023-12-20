@@ -1,4 +1,3 @@
-
 let read_file filename =
   let ic = open_in filename in
   let rec aux () =
@@ -120,4 +119,4 @@ let main () =
   Printf.printf "Part2> %d\n" power;
   ()
 
-  let () = main()
+let () = main()
