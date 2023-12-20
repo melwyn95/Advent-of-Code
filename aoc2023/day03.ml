@@ -139,6 +139,62 @@ let find_part_numbers n m grid =
     ) (0, pos_set) row  
   ) (0, NumberSet.empty) grid
 
+let find_gears n m i j grid =
+  let neighbours = NumberSet.empty in
+  let neighbours = 
+    if is_valid_index n m (i - 1) j && is_number grid.(i - 1).(j)
+    then NumberSet.add (get_number grid.(i - 1).(j)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m (i - 1) (j - 1) && is_number grid.(i - 1).(j - 1)
+    then NumberSet.add (get_number grid.(i - 1).(j - 1)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m (i - 1) (j + 1) && is_number grid.(i - 1).(j + 1)
+    then NumberSet.add (get_number grid.(i - 1).(j + 1)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m i (j - 1) && is_number grid.(i).(j - 1)
+    then NumberSet.add (get_number grid.(i).(j - 1)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m i (j + 1) && is_number grid.(i).(j + 1)
+    then NumberSet.add (get_number grid.(i).(j + 1)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m (i + 1) j && is_number grid.(i + 1).(j)
+    then NumberSet.add (get_number grid.(i + 1).(j)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m (i + 1) (j - 1) && is_number grid.(i + 1).(j - 1)
+    then NumberSet.add (get_number grid.(i + 1).(j - 1)) neighbours else neighbours 
+  in
+  let neighbours = 
+    if is_valid_index n m (i + 1) (j + 1) && is_number grid.(i + 1).(j + 1)
+    then NumberSet.add (get_number grid.(i + 1).(j + 1)) neighbours else neighbours 
+  in
+  if NumberSet.cardinal neighbours = 2 then
+    match List.of_seq @@ NumberSet.to_seq neighbours with
+    | [ (n1, _) ; (n2, _) ] -> Some (n1 * n2)
+    | _ -> failwith "impossible"
+  else None
+
+let find_gear_ratios n m grid =
+  snd @@ Array.fold_left (fun (i, gear_ratio_sum) row ->
+    i + 1, snd @@ Array.fold_left (fun (j, gear_ratio_sum) cell ->
+      match cell with
+      | Symbol '*' ->
+        let ns = find_gears n m i j grid in
+        let gear_ratio_sum = 
+          match ns with
+          | Some gear_ratio -> gear_ratio_sum + gear_ratio
+          | None -> gear_ratio_sum 
+        in
+        j + 1, gear_ratio_sum
+      | _ -> j + 1, gear_ratio_sum
+    ) (0, gear_ratio_sum) row  
+  ) (0, 0) grid
+
 let main () =
   Printf.printf "==== Day 03 ====\n";
   (* let input = "inputs/day03_simpl.txt" in *)
@@ -155,6 +211,8 @@ let main () =
     |> List.fold_left ( + ) 0 
   in
   Printf.printf "Part1> %d\n" sum;
+  let gear_ratio_sum = find_gear_ratios n n grid in
+  Printf.printf "Part2> %d\n" gear_ratio_sum;
   ()
 
 let () = main()
