@@ -24,12 +24,14 @@ let color_of_string = function
 
 type cube = int * color
 
+let print_cube (n, color) =
+  Printf.printf "| %d %s |" n (string_of_color color)
+
 type subset_cube = cube list
 
 let print_of_subset cubes =
   Printf.printf "[";
-  List.iter (fun (n, color) -> 
-    Printf.printf "| %d %s |" n (string_of_color color)) cubes;
+  List.iter print_cube cubes;
   Printf.printf "] ";
 
 type game = {
@@ -37,7 +39,7 @@ type game = {
   subsets : subset_cube list
 }
 
-let print_of_game { id ; subsets } =
+let print_game { id ; subsets } =
   Printf.printf "Game %d\nSubsets: " id;
   List.iter print_of_subset subsets;
   Printf.printf "\n"
@@ -64,16 +66,43 @@ let parse line =
       ) cubes in
       cubes
     ) subsets in
-    print_of_game { id ; subsets };
+    (* print_of_game { id ; subsets }; *)
+    (* is_game_valid { id ; subsets }; *)
     { id ; subsets }
   | _ -> failwith "Parse Error"
 
+let criteria = (12, Red), (13, Green), (14, Blue)
+
+let filter_cubes game color' =
+  List.concat_map (fun subset -> 
+    List.filter (fun (n, color) -> color = color') subset) game.subsets
+
+let max_cube (n, c) (n', c') =
+  let () = assert (c = c') in
+  if n > n' then n, c else n', c'
+
+let max_cubes cubes =
+  match cubes with
+  | [] -> failwith "empty cubes"
+  | [ cube ] -> cube
+  | cube :: cubes -> List.fold_left max_cube cube cubes
+
+let is_game_valid game =
+  let red, _ = filter_cubes game Red |> max_cubes in
+  let green, _ = filter_cubes game Green |> max_cubes in
+  let blue, _ = filter_cubes game Blue |> max_cubes in
+  red <= 12 && green <= 13 && blue <= 14
+
 let main () =
   Printf.printf "==== Day 02 ====\n";
-  let input = "inputs/day02_simpl.txt" in
-  (* let input = "inputs/day02.txt" in *)
+  (* let input = "inputs/day02_simpl.txt" in *)
+  let input = "inputs/day02.txt" in
   let lines = read_file input in
-  let _ = List.map parse lines in
+  let games = List.map parse lines in
+  let valid_games = List.filter is_game_valid games in
+  let sum_game_ids = List.fold_left 
+    (fun g ({ id ; subsets=_ }) -> g + id) 0 valid_games in
+  Printf.printf "Part1> %d\n" sum_game_ids;
   ()
 
   let () = main()
