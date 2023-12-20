@@ -81,17 +81,30 @@ let max_cube (n, c) (n', c') =
   let () = assert (c = c') in
   if n > n' then n, c else n', c'
 
-let max_cubes cubes =
+let min_cube (n, c) (n', c') =
+  let () = assert (c = c') in
+  if n < n' then n, c else n', c'  
+
+let max_min_cubes max_min cubes =
   match cubes with
   | [] -> failwith "empty cubes"
   | [ cube ] -> cube
-  | cube :: cubes -> List.fold_left max_cube cube cubes
+  | cube :: cubes -> List.fold_left max_min cube cubes
+
+let max_cubes = max_min_cubes max_cube
+let min_cubes = max_min_cubes min_cube
 
 let is_game_valid game =
   let red, _ = filter_cubes game Red |> max_cubes in
   let green, _ = filter_cubes game Green |> max_cubes in
   let blue, _ = filter_cubes game Blue |> max_cubes in
   red <= 12 && green <= 13 && blue <= 14
+
+let power game =
+  let red, _ = filter_cubes game Red |> max_cubes in
+  let green, _ = filter_cubes game Green |> max_cubes in
+  let blue, _ = filter_cubes game Blue |> max_cubes in
+  red * green * blue
 
 let main () =
   Printf.printf "==== Day 02 ====\n";
@@ -103,6 +116,8 @@ let main () =
   let sum_game_ids = List.fold_left 
     (fun g ({ id ; subsets=_ }) -> g + id) 0 valid_games in
   Printf.printf "Part1> %d\n" sum_game_ids;
+  let power = List.map power games |> List.fold_left ( + ) 0 in
+  Printf.printf "Part2> %d\n" power;
   ()
 
   let () = main()
