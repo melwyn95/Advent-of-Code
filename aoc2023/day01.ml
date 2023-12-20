@@ -32,85 +32,59 @@ let rec find_calibraion_values lines =
 let sum values = List.fold_left (+) 0 values
 
 let conv s ~reverse =
-  let sub s len = 
-    if reverse 
-      then reverse_string (String.sub s 0 len) 
-      else String.sub s 0 len
-  in
-  let sub_ s n len =
-    if len - 5 >= 0
-    then String.sub s n (len - n)
-    else ""
-  in
-  let conv_prefix s =
-    (* Printf.printf "len = %d | s = %s \n" (String.length s) s; *)
-    let len = String.length s in
-    let s = 
-      if len >= 5
-      then match sub s 5 with
-      | "three" -> "3" ^ sub_ s 5 len
-      | "seven" -> "7" ^ sub_ s 5 len
-      | "eight" -> "8" ^ sub_ s 5 len
-      | _       -> s
-      else s
-    in
-    (* Printf.printf "5 len = %d | s = %s \n" (String.length s) s; *)
-    let s = 
-      if len >= 4
-      then match sub s 4 with
-      | "four" -> "4" ^ sub_ s 4 len
-      | "five" -> "5" ^ sub_ s 4 len
-      | "nine" -> "9" ^ sub_ s 4 len
-      | _       -> s
-      else s
-    in
-    (* Printf.printf "4 len = %d | s = %s \n" (String.length s) s; *)
-    let s = 
-      if len >= 3
-      then match sub s 3 with
-      | "one" -> "1" ^ sub_ s 3 len
-      | "two" -> "2" ^ sub_ s 3 len
-      | "six" -> "6" ^ sub_ s 3 len
-      | _       -> s
-      else s
-    in
-    (* Printf.printf "3 len = %d | s = %s \n" (String.length s) s; *)
-    s
+  let first_digit s =
+    let length = String.length s in
+    if length < 3
+    then String.sub s 0 1, String.sub s 1 (length - 1)
+    else
+      let sub = String.sub s 0 3 in
+      let sub = if reverse then reverse_string sub else sub in
+      match sub with
+      | "one" -> "1", String.sub s 3 (length - 3)
+      | "two" -> "2", String.sub s 3 (length - 3)
+      | "six" -> "6", String.sub s 3 (length - 3)
+      | _ ->
+        if length < 4 then String.sub s 0 1, String.sub s 1 (length - 1) else
+        let sub = String.sub s 0 4 in
+        let sub = if reverse then reverse_string sub else sub in
+        match sub with
+        | "four" -> "4", String.sub s 4 (length - 4)
+        | "five" -> "5", String.sub s 4 (length - 4)
+        | "nine" -> "9", String.sub s 4 (length - 4)
+        | _ ->
+          if length < 5 then String.sub s 0 1, String.sub s 1 (length - 1) else
+          let sub = String.sub s 0 5 in
+          let sub = if reverse then reverse_string sub else sub in
+          match sub with
+          | "three" -> "3", String.sub s 5 (length - 5)
+          | "seven" -> "7", String.sub s 5 (length - 5)
+          | "eight" -> "8", String.sub s 5 (length - 5)
+          | _ -> String.sub s 0 1, String.sub s 1 (length - 1)
   in
   let rec aux s =
-    Printf.printf "aux %s\n" s;
-    if String.length s > 1
-    then 
-      let s = conv_prefix s in
-      (* print_endline s; *)
-      String.sub s 0 1 ^ (
-        if String.length s > 0 
-        then aux (String.sub s 1 (String.length s - 1))
-        else ""
-      )
-    else s
+    if String.length s < 3
+    then s
+    else
+      let d, s = first_digit s in
+      d ^ aux s
   in
-  (* print_endline s; *)
-  (* print_endline (conv_prefix s); *)
   aux s
 
-  let rec find_calibraion_values2 lines =
-    match lines with
-    | [] -> []
-    | line :: lines ->  
-      let num = find_digit (conv line ~reverse:false) * 10 + 
-                find_digit (conv ~reverse:true (reverse_string line)) in
-      Printf.printf "num = %d\n" num;
-      num :: find_calibraion_values2 lines
-  
-  
+let rec find_calibraion_values2 lines =
+  match lines with
+  | [] -> []
+  | line :: lines ->  
+    let num = find_digit (conv line ~reverse:false) * 10 + 
+              find_digit (conv ~reverse:true (reverse_string line)) in
+    num :: find_calibraion_values2 lines
+
 let main () =
   Printf.printf "==== Day 01 ====\n";
-  let input = "inputs/day01_simpl.txt" in
-  (* let input = "inputs/day01.txt" in *)
+  (* let input = "inputs/day01_simpl.txt" in *)
+  let input = "inputs/day01.txt" in
   let lines = read_file input in
-  (* let part1 = sum (find_calibraion_values lines) in *)
-  (* Printf.printf "Part1> %d\n" part1; *)
+  let part1 = sum (find_calibraion_values lines) in
+  Printf.printf "Part1> %d\n" part1;
   let part2 = sum (find_calibraion_values2 lines) in
   Printf.printf "Part2> %d\n" part2;
   ()
