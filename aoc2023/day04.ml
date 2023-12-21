@@ -55,11 +55,20 @@ let power x n =
   in
   aux n 1
 
-let find_matching card =
+let update_counts idx card_counts n =
+  for i = idx + 1 to idx + n do
+    if i >= Array.length card_counts then () else
+    card_counts.(i) <- card_counts.(i) + card_counts.(idx) 
+  done
+
+let find_matching card_counts i card =
   let matching = IntSet.inter card.winning card.existing in
   if matching = IntSet.empty 
   then 0 
-  else power 2 (IntSet.cardinal matching - 1)
+  else
+    let n = IntSet.cardinal matching in
+    update_counts i card_counts n;
+    power 2 (n - 1)
 
 let main () =
   Printf.printf "==== Day 04 ====\n";
@@ -67,8 +76,12 @@ let main () =
   let input = "inputs/day04.txt" in
   let lines = read_file input in
   let cards = List.map parse lines in
-  let points = List.map find_matching cards |> List.fold_left ( + ) 0 in
+  let card_counts = Array.make (List.length cards) 1 in
+  let points = List.mapi (find_matching card_counts) cards 
+    |> List.fold_left ( + ) 0 in
   Printf.printf "Part1> %d\n" points;
+  let total_cards = Array.fold_left ( + ) 0 card_counts in
+  Printf.printf "Part2> %d\n" total_cards;
   ()
 
 let () = main()
