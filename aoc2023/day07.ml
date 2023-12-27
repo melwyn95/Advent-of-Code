@@ -27,17 +27,34 @@ let card_score c =
   | Num 2 -> 1
   | _ -> failwith "invalid card"
 
-let compare_cards c1 c2 =
+let card_score' c =
+  match c with
+  | A -> 13
+  | K -> 12
+  | Q -> 11
+  | J -> 0
+  | T -> 9
+  | Num 9 -> 8
+  | Num 8 -> 7
+  | Num 7 -> 6
+  | Num 6 -> 5
+  | Num 5 -> 4
+  | Num 4 -> 3
+  | Num 3 -> 2
+  | Num 2 -> 1
+  | _ -> failwith "invalid card"
+
+let compare_cards card_score c1 c2 =
   Int.compare (card_score c1) (card_score c2)
 
-let compare_hand h1 h2 =
+let compare_hand card_score h1 h2 =
   let c11, c12, c13, c14, c15 = h1 in
   let c21, c22, c23, c24, c25 = h2 in
-  match compare_cards c11 c21 with
-  | 0 -> (match compare_cards c12 c22 with
-          | 0 -> (match compare_cards c13 c23 with
-                  | 0 -> (match compare_cards c14 c24 with
-                          | 0 -> compare_cards c15 c25
+  match compare_cards card_score c11 c21 with
+  | 0 -> (match compare_cards card_score c12 c22 with
+          | 0 -> (match compare_cards card_score c13 c23 with
+                  | 0 -> (match compare_cards card_score c14 c24 with
+                          | 0 -> compare_cards card_score c15 c25
                           | n -> n)
                   | n -> n)
           | n -> n)
@@ -61,7 +78,7 @@ let print_hand (c1, c2, c3, c4, c5) =
 
 module CardSet = Set.Make (struct 
   type t = card
-  let compare = compare_cards
+  let compare = compare_cards card_score
 end)
 
 let card_of_string = function
@@ -202,21 +219,59 @@ let hand_type : hand -> hand_type =
     | 1 -> Five_of_a_kind c1
     | _ -> failwith "invalid hand"
 
+let promote : hand_type -> hand_type = fun hand_type ->
+  match hand_type with
+  | High_card (J, a, b, c, d)
+  | High_card (a, J, b, c, d)
+  | High_card (a, b, J, c, d)
+  | High_card (a, b, c, J, d)
+  | High_card (a, b, c, d, J) -> One_pair (a, b, c, d)
+  | High_card (a, b, c, d, e) -> High_card (a, b, c, d, e)
+  | One_pair (J, b, c, d) -> Three_of_a_kind (b, c, d)
+  | One_pair (a, J, b, c)
+  | One_pair (a, b, J, c)
+  | One_pair (a, b, c, J) -> Three_of_a_kind (a, b, c)
+  | One_pair (a, b, c, d) -> One_pair (a, b, c, d)
+  | Two_pair (J, a, b) -> Four_of_a_kind (a, b)
+  | Two_pair (a, J, b) -> Four_of_a_kind (a, b)
+  | Two_pair (a, b, J) -> Full_house (a, b)
+  | Two_pair (a, b, c) -> Two_pair (a, b, c)
+  | Three_of_a_kind (J, a, b) -> Four_of_a_kind (a, b)
+  | Three_of_a_kind (a, J, b) -> Four_of_a_kind (a, b)
+  | Three_of_a_kind (a, b, J) -> Four_of_a_kind (a, b)
+  | Three_of_a_kind (a, b, c) -> Three_of_a_kind (a, b, c)
+  | Full_house (J, a) -> Five_of_a_kind a
+  | Full_house (a, J) -> Five_of_a_kind a
+  | Full_house (a, b) -> Full_house (a, b)
+  | Four_of_a_kind (J, a) -> Five_of_a_kind a
+  | Four_of_a_kind (a, J) -> Five_of_a_kind a
+  | Four_of_a_kind (a, b) -> Four_of_a_kind (a, b)
+  | Five_of_a_kind a -> Five_of_a_kind a
+
 let main () =
   Printf.printf "==== Day 07 ====\n";
   (* let input = "inputs/day07_simpl.txt" in *)
   let input = "inputs/day07.txt" in
   let lines = read_file input in
-  let rows = List.map parse lines in
-  let rows = List.map (fun (hand, rank) ->hand, hand_type hand, rank) rows in
+  let rows' = List.map parse lines in
+  let rows = List.map (fun (hand, rank) ->hand, hand_type hand, rank) rows' in
   let rows = List.sort (fun (hand1, hand_type1, _) (hand2, hand_type2, _) -> 
     match compare_hand_type hand_type1 hand_type2 with
-    | 0 -> compare_hand hand1 hand2
+    | 0 -> compare_hand card_score hand1 hand2
     | n -> n
   ) rows in
   let rows = List.mapi (fun i (_, _, bid) -> (i + 1) * bid) rows in
   let total_winnings = List.fold_left ( + ) 0 rows in
   Printf.printf "Part1> %d\n" total_winnings;
+  let rows = List.map (fun (hand, rank) ->hand, promote @@ hand_type hand, rank) rows' in
+  let rows = List.sort (fun (hand1, hand_type1, _) (hand2, hand_type2, _) -> 
+    match compare_hand_type hand_type1 hand_type2 with
+    | 0 -> compare_hand card_score' hand1 hand2
+    | n -> n
+  ) rows in
+  let rows = List.mapi (fun i (_, _, bid) -> (i + 1) * bid) rows in
+  let total_winnings = List.fold_left ( + ) 0 rows in
+  Printf.printf "Part2> %d\n" total_winnings;
   ()
 
 let () = main ()
