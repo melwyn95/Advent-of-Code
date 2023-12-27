@@ -35,7 +35,7 @@ let parse lines =
           let left = String.trim left 
             |> fun s -> String.sub s 1 (String.length s - 1)
           in
-          let right = String.trim left 
+          let right = String.trim right
             |> fun s -> String.sub s 0 (String.length s - 1)
           in
           left, right 
@@ -55,14 +55,38 @@ let print_path path =
   List.iter (function L -> Printf.printf "L" | R -> Printf.printf "R") path;
   Printf.printf "\n"
 
+let go = function L -> fst | R -> snd
+
+let explore path start network =
+  let rec aux curr name steps =
+    (* print_path curr; *)
+    (* Printf.printf "namr %s\n" name; *)
+    let neighbours = SMap.find name network in
+    (* let l, r = neighbours in *)
+    (* Printf.printf "l = %s | r = %s\n" l r; *)
+    match curr with
+    | [] -> 
+      (* failwith "toto" *)
+      aux path name steps
+    | dir :: curr ->
+      (* Printf.printf "$ %s | %s \n" (go dir neighbours) (match dir with L -> "L" | R -> "R"); *)
+      if go dir neighbours = "ZZZ"
+      then steps + 1
+      else aux curr (go dir neighbours) (steps + 1)
+  in
+  aux path start 0
+    
+
 let main () =
   Printf.printf "==== Day 08 ====\n";
-  let input = "inputs/day08_simpl.txt" in
-  (* let input = "inputs/day08.txt" in *)
+  (* let input = "inputs/day08_simpl.txt" in *)
+  let input = "inputs/day08.txt" in
   let lines = read_file input in
   let path, network = parse lines in
-  print_network network;
-  print_path path;
+  (* print_path path; *)
+  (* print_network network; *)
+  let path_length = explore path "AAA" network in
+  Printf.printf "Part1> %d\n" path_length;
   ()
 
 let () = main ()
