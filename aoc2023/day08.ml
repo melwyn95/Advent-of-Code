@@ -57,25 +57,38 @@ let print_path path =
 
 let go = function L -> fst | R -> snd
 
-let explore path start network =
+let explore stop path start network =
   let rec aux curr name steps =
-    (* print_path curr; *)
-    (* Printf.printf "namr %s\n" name; *)
     let neighbours = SMap.find name network in
-    (* let l, r = neighbours in *)
-    (* Printf.printf "l = %s | r = %s\n" l r; *)
     match curr with
     | [] -> 
-      (* failwith "toto" *)
       aux path name steps
     | dir :: curr ->
-      (* Printf.printf "$ %s | %s \n" (go dir neighbours) (match dir with L -> "L" | R -> "R"); *)
-      if go dir neighbours = "ZZZ"
+      if stop (go dir neighbours)
       then steps + 1
       else aux curr (go dir neighbours) (steps + 1)
   in
   aux path start 0
-    
+
+let find_all_end_in_A network =
+  SMap.fold (fun s _ xs ->
+    if String.ends_with ~suffix:"A" s then s :: xs else xs
+  ) network []
+
+let print_names names =
+  List.iter (fun name -> Printf.printf "%s " name) names;
+  Printf.printf "\n"
+
+let rec gcd a b =
+  if b = 0 then a
+  else gcd b (a mod b)
+
+let lcm a b = a * b / gcd a b 
+
+let simultaneous_explore path starts network =
+  let stop = String.ends_with ~suffix:"Z" in
+  let paths = List.map (fun start -> explore stop path start network) starts in
+  List.fold_left lcm 1 paths
 
 let main () =
   Printf.printf "==== Day 08 ====\n";
@@ -83,10 +96,11 @@ let main () =
   let input = "inputs/day08.txt" in
   let lines = read_file input in
   let path, network = parse lines in
-  (* print_path path; *)
-  (* print_network network; *)
-  let path_length = explore path "AAA" network in
+  let path_length = explore (fun s -> s = "ZZZ") path "AAA" network in
   Printf.printf "Part1> %d\n" path_length;
+  let path_length = 
+    simultaneous_explore path (find_all_end_in_A network) network in
+  Printf.printf "Part2> %d\n" path_length;
   ()
 
 let () = main ()
